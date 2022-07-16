@@ -64,6 +64,20 @@ param(
     [switch]$ignore = $false
 )
 
+if ($host.Version -le 5.1) {
+    Write-Output ""
+    Write-Output "Your PowerShell version is too low. Please upgrade your PowerShell."
+    Write-Output "你的 PowerShell 版本过低。请升级你的 PowerShell。"
+    Write-Output "You can download the Windows Management Framework 5.1 to upgrade your PowerShell version:"
+    Write-Output "你可在此处下载 Windows Management Framework 5.1 来升级你的 PowerShell 版本:"
+    Write-Output "https://docs.microsoft.com/powershell/scripting/windows-powershell/wmf/setup/install-configure?view=powershell-5.1"
+    Write-Output ""
+    Write-Output "Press Ctrl+C or wait 60 second to exit..."
+    Write-Output "按 Ctrl+C 或等待 60 秒来退出..."
+    Start-Sleep 60
+    exit
+}
+
 $getSysLang = Get-WinSystemLocale
 if ( $getSysLang.LCID -eq 2052 ) {
     $langFolder = "文件夹"

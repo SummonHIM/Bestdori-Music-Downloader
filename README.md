@@ -66,3 +66,13 @@ bmd.ps1 [-listFile] <Object> [[-mainServer] <String>] [[-customAlbumName] <Strin
 
 # 或在 PowerShell 中键入 `Get-Help .\bmd.ps1 -full` 来显示更详细的帮助。
 ```
+
+### 疑难解答
+#### 无法在我的电脑运行 PowerShell 脚本。系统提示因为在此系统上禁止运行脚本。
+PowerShell 默认不允许使用脚本，可使用管理员运行 PowerShell 并执行以下命令解除锁定。详细信息可前去 [https:/go.microsoft.com/fwlink/?LinkID=135170](https:/go.microsoft.com/fwlink/?LinkID=135170) 了解。
+```PowerShell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+
+#### 无法在Win7、Win8运行这个脚本。
+Win7 和 Win8 用户可以前去 [https://docs.microsoft.com/powershell/scripting/windows-powershell/wmf/setup/install-configure?view=powershell-5.1](https://docs.microsoft.com/powershell/scripting/windows-powershell/wmf/setup/install-configure?view=powershell-5.1) 下载并更新你的 PowerShell 版本（虽然能运行，但是脚本无法更改语言）。XP 用户请考虑升级 Win10
