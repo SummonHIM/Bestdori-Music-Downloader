@@ -17,7 +17,7 @@ Full use sample:
 ```PowerShell
 Start PowerShell
 PS> cd Path\to\Script
-PS> .\bmd.ps1 -listFile listFile.sample.json -mainServer cn -customAlbumName "BanG Dream!" -forceReDownload -clean
+PS> .\bmd.ps1 -listFile listFile.sample.json -mainServer en -customAlbumName "BanG Dream!" -forceReDownload -clean
 ```
 
 Parameter:
@@ -34,9 +34,6 @@ bmd.ps1 [-listFile] <Object> [[-mainServer] <Object>] [[-customAlbumName] <strin
 # Or use "Get-Help .\bmd.ps1 -full" in PowerShell to show full help.
 ```
 
-### Create song id file
-Check tutorial:
-
 ## 中文
 一个能从 Bestdori 上自动下载歌曲并填入歌曲信息（歌曲标题、歌手、专辑、作曲人员和封面）的脚本。
 
@@ -47,7 +44,7 @@ eyeD3 是一个 Python 工具，用于处理包含ID3元数据（即歌曲信息
 
 ### 使用方法
 #### PowerShell 版本
-简易使用范例：[简易使用教程](https://github.com/SummonHIM/Bestdori-Music-Downloader/wiki/%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E6%AD%8C%E6%9B%B2ID%E6%96%87%E4%BB%B6%EF%BC%88%E7%AE%80%E6%98%93%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B%EF%BC%89)
+简易使用教程：[简易使用教程](https://github.com/SummonHIM/Bestdori-Music-Downloader/wiki/%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E6%AD%8C%E6%9B%B2ID%E6%96%87%E4%BB%B6%EF%BC%88%E7%AE%80%E6%98%93%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B%EF%BC%89)
 
 最全使用范例
 ```PowerShell

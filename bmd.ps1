@@ -58,17 +58,46 @@
 param(
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$listFile,
     [Parameter(ValueFromPipeline = $true)][string]$mainServer = "jp",
-    [string]$customAlbumName = "バンドリ！ ガールズバンドパーティ！",
+    [string]$customAlbumName = "バンドリ！　ガールズバンドパーティ！",
     [switch]$forceReDownload = $false,
     [switch]$clean = $false,
     [switch]$ignore = $false
 )
 
+$getSysLang = Get-WinSystemLocale
+if ( $getSysLang.LCID -eq 2052 ) {
+    $langFolder = "文件夹"
+    $langNotFoundMkdir = "未找到，正在创建"
+    $langDownloading = "正在下载"
+    $langTo = "至"
+    $langIsAlreadyDownloaded = "已下载"
+    $langJacketTypeError = "图片类型不正确！"
+    $langJacketTryRedown = "正在尝试重新下载..."
+    $langJacketSkip = "跳过添加图片。"
+    $langJacketWriting = "正在使用 eyeD3 写入歌曲信息..."
+    $langCopying = "正在复制"
+    $langEyeD3NotFound = "未找到 eyeD3！ 无法写入歌曲信息..."
+    $langSongInfo = " 歌曲信息..."
+} else {
+    $langFolder = "Folder"
+    $langNotFoundMkdir = "not found, Creating..."
+    $langDownloading = "Downloading"
+    $langTo = "to"
+    $langIsAlreadyDownloaded = "is already downloaded."
+    $langJacketTypeError = "Image type not correct!"
+    $langJacketTryRedown = "Try redownload..."
+    $langJacketSkip = "skip image adding."
+    $langJacketWriting = "Writing music information by using eyeD3..."
+    $langCopying = "Copying"
+    $langEyeD3NotFound = "eyeD3 Not found! Can't fill in song information."
+    $langSongInfo = " song information..."
+}
+
 function downloadSongs {
     # If folder "Origin" not exist, mkdir.
     $isOriginExist = Test-Path Origin
     if (! $isOriginExist) {
-        Write-Host "Folder Origin not found, Creating..." -ForegroundColor Yellow
+        Write-Host "$langFolder Origin $langNotFoundMkdir" -ForegroundColor Yellow
         mkdir Origin > $null
     }
     
@@ -77,11 +106,11 @@ function downloadSongs {
     # If music already downloaded, skip. else go download.
     $isMusicDownloaded = Test-Path "Origin\$songInfo_bgmId.mp3"
     if ((! $isMusicDownloaded) -or ($forceReDownload)) {
-        Write-Host "Downloading $musicDownloadUrl to Origin\$songInfo_bgmId.mp3..." -ForegroundColor Green
+        Write-Host "$langDownloading $musicDownloadUrl $langTo Origin\$songInfo_bgmId.mp3..." -ForegroundColor Green
         Invoke-WebRequest "$musicDownloadUrl" -OutFile "Origin\$songInfo_bgmId.mp3"
     }
     else {
-        Write-Host "$songInfo_bgmId.mp3(Origin\$songInfo_bgmId.mp3) is already downloaded." -ForegroundColor Yellow
+        Write-Host "$songInfo_bgmId.mp3(Origin\$songInfo_bgmId.mp3) $langIsAlreadyDownloaded" -ForegroundColor Yellow
     }
 }
 
@@ -89,7 +118,7 @@ function downloadImgs {
     # If folder "Jacket" not exist, mkdir.
     $isJacketExist = Test-Path Jacket
     if (! $isJacketExist) {
-        Write-Host "Folder Jacket not found, Creating..." -ForegroundColor Yellow
+        Write-Host "$langFolder Jacket $langNotFoundMkdir" -ForegroundColor Yellow
         mkdir Jacket > $null
     }
 
@@ -98,20 +127,20 @@ function downloadImgs {
     # If music jacket already downloaded, skip. else go download.
     $isJacketDownloaded = Test-Path "Jacket\$songInfo_jacketImage.png"
     if ((! $isJacketDownloaded) -or ($forceReDownload)) {
-        Write-Host "Downloading $musicJacketUrl to Jacket\$songInfo_jacketImage.png..." -ForegroundColor Green
+        Write-Host "$langDownloading $musicJacketUrl $langTo Jacket\$songInfo_jacketImage.png..." -ForegroundColor Green
         Invoke-WebRequest "$musicJacketUrl" -OutFile "Jacket\$songInfo_jacketImage.png"
     }
     else {
         # If music jacket is bestdori 404(html), try redownload.
         $CheckJacket = Get-Content "Jacket\$songInfo_jacketImage.png" | Select-String DOCTYPE
         if ($CheckJacket) {
-            Write-Host "Image type not correct! Try redownload..." -ForegroundColor Red
+            Write-Host "$langJacketTypeError $langJacketTryRedown" -ForegroundColor Red
             if (! $ignore) { Pause }
-            Write-Host "Downloading $musicJacketUrl to Jacket\$songInfo_jacketImage.png..." -ForegroundColor Green
+            Write-Host "$langDownloading $musicJacketUrl $langTo Jacket\$songInfo_jacketImage.png..." -ForegroundColor Green
             Invoke-WebRequest "$musicJacketUrl" -OutFile "Jacket\$songInfo_jacketImage.png"    
         }
         else {
-            Write-Host "$songInfo_jacketImage.png(Jacket\$songInfo_jacketImage.png) is already downloaded." -ForegroundColor Yellow
+            Write-Host "$songInfo_jacketImage.png(Jacket\$songInfo_jacketImage.png) $langIsAlreadyDownloaded" -ForegroundColor Yellow
         }
     }
 }
@@ -121,28 +150,28 @@ function writeSongInfo {
     # If folder "Output" not exist, mkdir.
     $isOutputExist = Test-Path Output
     if (! $isOutputExist) {
-        Write-Host "Folder Output not found, Creating..." -ForegroundColor Yellow
+        Write-Host "$langFolder Output $langNotFoundMkdir" -ForegroundColor Yellow
         mkdir Output > $null
     }
 
     # Copy music to Output folder
-    Write-Host "Copying Origin\$songInfo_bgmId.mp3 to Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3..." -ForegroundColor Green
+    Write-Host "$langCopying Origin\$songInfo_bgmId.mp3 $langTo Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3..." -ForegroundColor Green
     Copy-Item "Origin\$songInfo_bgmId.mp3" -Destination "Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3"
     # If music jacket is bestdori 404(html), skip add-image.
     $CheckPNG = Get-Content "Jacket\$songInfo_jacketImage.png" | Select-String DOCTYPE
     $CheckEyeD3 = eyed3 --version
     if ($CheckPNG) {
-        Write-Host "Image type not correct! skip image adding." -ForegroundColor Red
+        Write-Host "$langJacketTypeError $langJacketSkip" -ForegroundColor Red
         if (! $ignore) { Pause }
-        Write-Host "Writing music information by using eyeD3..." -ForegroundColor Green
+        Write-Host "$langJacketWriting" -ForegroundColor Green
         eyeD3 --title "$songInfo_musicTitle" --artist "$bandName" --album "$customAlbumName" --composer "$songInfo_lyricist;$songInfo_composer;$songInfo_arranger" --v2 --to-v2.3 "Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3"
     }
     elseif ($CheckEyeD3) {
-        Write-Host "Writing music information by using eyeD3..." -ForegroundColor Green
+        Write-Host "$langJacketWriting" -ForegroundColor Green
         eyeD3 --title "$songInfo_musicTitle" --artist "$bandName" --album "$customAlbumName" --composer "$songInfo_lyricist;$songInfo_composer;$songInfo_arranger" --add-image "Jacket\$songInfo_jacketImage.png:FRONT_COVER" --v2 --to-v2.3 "Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3"
     }
     else {
-        Write-Host "eyeD3 Not found! Can't fill in song information." -ForegroundColor Red
+        Write-Host "$langEyeD3NotFound" -ForegroundColor Red
         if (! $ignore) { Pause }
     }
 }
@@ -153,7 +182,7 @@ $bandInfo = Invoke-RestMethod "https://bestdori.com/api/bands/all.1.json"
 foreach ($songList in $getSongList.songs) {
     Write-Host ""
     # Download song information from https://bestdori.com/api/songs/$songList.json
-    Write-Host "Downloading song information..." -ForegroundColor Green
+    Write-Host "$langDownloading$langSongInfo" -ForegroundColor Green
     $songInfo = Invoke-RestMethod "https://bestdori.com/api/songs/$songList.json"
     # Get bgmID
     $songInfo_bgmId = $songInfo.bgmId
