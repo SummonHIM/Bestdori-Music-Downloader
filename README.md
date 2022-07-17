@@ -1,8 +1,13 @@
-# Bestdori-Music-Downloader
+# Bestdori Music Downloader
 [English](#English)/[中文](#中文)
 
 ## English
 A script that automatically downloads music from Bestdori and fills in the music information.(Song title, Artist, Album, Composer and Front cover)
+
+### Download
+[GitHub Releases](https://github.com/SummonHIM/Bestdori-Music-Downloader/releases/latest)
+
+Download UTF-8 Version if your using UTF-8 PC.
 
 ### Install eyeD3
 eyeD3 is a Python tool for working with audio files, specifically MP3 files containing ID3 metadata (i.e. song info). This script uses eyeD3 to edit song information.(Official website: [https://eyed3.readthedocs.io/en/latest/index.html](https://eyed3.readthedocs.io/en/latest/index.html))
@@ -37,6 +42,11 @@ bmd.ps1 [-listFile] <Object> [[-mainServer] <Object>] [[-customAlbumName] <strin
 ## 中文
 一个能从 Bestdori 上自动下载歌曲并填入歌曲信息（歌曲标题、歌手、专辑、作曲人员和封面）的脚本。
 
+### 下载
+[GitHub Releases](https://github.com/SummonHIM/Bestdori-Music-Downloader/releases/latest)
+
+一般情况只需下载普通版（GBK）即可。若你的电脑默认使用UTF-8编解码则下载UTF-8版本。
+
 ### 安装前置软件（eyeD3）
 eyeD3 是一个 Python 工具，用于处理包含ID3元数据（即歌曲信息）的 MP3 文件。本脚本使用 eyeD3 软件来编辑歌曲信息。（官网：[https://eyed3.readthedocs.io/en/latest/index.html](https://eyed3.readthedocs.io/en/latest/index.html)）
 1. 下载并安装 Python（[https://www.python.org/downloads](https://www.python.org/downloads)）。安装时请注意安装捆绑 `pip`，Windows 用户记得勾选 `Add Python *.* to PATH`
@@ -69,7 +79,7 @@ bmd.ps1 [-listFile] <Object> [[-mainServer] <String>] [[-customAlbumName] <Strin
 
 ### 疑难解答
 #### 无法在我的电脑运行 PowerShell 脚本。系统提示因为在此系统上禁止运行脚本。
-PowerShell 默认不允许使用脚本，可使用管理员运行 PowerShell 并执行以下命令解除锁定。详细信息可前去 [https:/go.microsoft.com/fwlink/?LinkID=135170](https:/go.microsoft.com/fwlink/?LinkID=135170) 了解。
+PowerShell 默认不允许使用脚本，可使用 PowerShell 执行以下命令解除锁定。详细信息可前去 [https:/go.microsoft.com/fwlink/?LinkID=135170](https:/go.microsoft.com/fwlink/?LinkID=135170) 了解。
 ```PowerShell
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```

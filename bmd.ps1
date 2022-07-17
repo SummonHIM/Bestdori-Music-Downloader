@@ -67,13 +67,10 @@ param(
 if ($host.Version -le 5.1) {
     Write-Output ""
     Write-Output "Your PowerShell version is too low. Please upgrade your PowerShell."
-    Write-Output "你的 PowerShell 版本过低。请升级你的 PowerShell。"
     Write-Output "You can download the Windows Management Framework 5.1 to upgrade your PowerShell version:"
-    Write-Output "你可在此处下载 Windows Management Framework 5.1 来升级你的 PowerShell 版本:"
     Write-Output "https://docs.microsoft.com/powershell/scripting/windows-powershell/wmf/setup/install-configure?view=powershell-5.1"
     Write-Output ""
     Write-Output "Press Ctrl+C or wait 60 second to exit..."
-    Write-Output "按 Ctrl+C 或等待 60 秒来退出..."
     Start-Sleep 60
     exit
 }
@@ -92,6 +89,7 @@ if ( $getSysLang.LCID -eq 2052 ) {
     $langCopying = "正在复制"
     $langEyeD3NotFound = "未找到 eyeD3！ 无法写入歌曲信息..."
     $langSongInfo = " 歌曲信息..."
+    $langEnableClean = "已启用清理，正在删除 Jacket 和 Origin 文件夹..."
 } else {
     $langFolder = "Folder"
     $langNotFoundMkdir = "not found, Creating..."
@@ -105,6 +103,7 @@ if ( $getSysLang.LCID -eq 2052 ) {
     $langCopying = "Copying"
     $langEyeD3NotFound = "eyeD3 Not found! Can't fill in song information."
     $langSongInfo = " song information..."
+    $langEnableClean = "Clean is enable, removing Jacket and Origin..."
 }
 
 function downloadSongs {
@@ -151,7 +150,7 @@ function downloadImgs {
             Write-Host "$langJacketTypeError $langJacketTryRedown" -ForegroundColor Red
             if (! $ignore) { Pause }
             Write-Host "$langDownloading $musicJacketUrl $langTo Jacket\$songInfo_jacketImage.png..." -ForegroundColor Green
-            Invoke-WebRequest "$musicJacketUrl" -OutFile "Jacket\$songInfo_jacketImage.png"    
+            Invoke-WebRequest "$musicJacketUrl" -OutFile "Jacket\$songInfo_jacketImage.png"
         }
         else {
             Write-Host "$songInfo_jacketImage.png(Jacket\$songInfo_jacketImage.png) $langIsAlreadyDownloaded" -ForegroundColor Yellow
@@ -231,7 +230,8 @@ foreach ($songList in $getSongList.songs) {
 }
 
 if ($clean) {
-    Write-Host "Clean is enable, removing Jacket and Origin" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "$langEnableClean" -ForegroundColor Yellow
     Remove-Item Jacket -Recurse
     Remove-Item Origin -Recurse
 }

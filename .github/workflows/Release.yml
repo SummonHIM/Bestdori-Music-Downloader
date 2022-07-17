@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      releaseVersion:
+        description: 'Enter the version number'
+        required: true
+        default: 'v.'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install environment
+        run: sudo apt install -y tofrodos zip
+
+      - name: Pack script to zip
+        run: |
+          todos bmd.ps1
+          zip -r Bestdori-Music-Downloader-$GITHUB_EVENT_INPUTS_RELEASEVERSION.zip bmd.ps1 README.md
+
+      - name: Transcode to UTF-8 and pack script to zip
+        run: |
+          iconv -f gbk -t utf-8 bmd.ps1 > bmd.utf8.ps1
+          rm -rf bmd.ps1
+          mv bmd.utf8.ps1 bmd.ps1
+          todos bmd.ps1
+          zip -r Bestdori-Music-Downloader-UTF8-$GITHUB_EVENT_INPUTS_RELEASEVERSION.zip bmd.ps1 README.md
+
+      - name: Create release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.event.inputs.releaseVersion }}
+          release_name: Bestdori Music Downloader ${{ github.event.inputs.releaseVersion }}
+          draft: false
+          prerelease: false
+
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Bestdori-Music-Downloader-${{ github.event.inputs.releaseVersion }}.zip
+          asset_name: Bestdori-Music-Downloader-${{ github.event.inputs.releaseVersion }}.zip
+          asset_content_type: application/zip
+
+      - name: Upload UTF-8 release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Bestdori-Music-Downloader-UTF8-${{ github.event.inputs.releaseVersion }}.zip
+          asset_name: Bestdori-Music-Downloader-UTF8-${{ github.event.inputs.releaseVersion }}.zip
+          asset_content_type: application/zip

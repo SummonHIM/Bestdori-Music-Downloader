@@ -1,0 +1,43 @@
+name: Test
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install environment
+        run: sudo apt install -y tofrodos zip
+
+      - name: Pack script to zip
+        run: |
+          todos bmd.ps1
+          zip -r Bestdori-Music-Downloader-$GITHUB_RUN_NUMBER.zip bmd.ps1 README.md
+
+      - name: Transcode to UTF-8 and pack script to zip
+        run: |
+          iconv -f gbk -t utf-8 bmd.ps1 > bmd.utf8.ps1
+          rm -rf bmd.ps1
+          mv bmd.utf8.ps1 bmd.ps1
+          todos bmd.ps1
+          zip -r Bestdori-Music-Downloader-UTF8-$GITHUB_RUN_NUMBER.zip bmd.ps1 README.md
+
+      - name: Upload firmware directory
+        uses: actions/upload-artifact@main
+        with:
+          name: Bestdori-Music-Downloader-${{ github.run_number }}.zip
+          path: Bestdori-Music-Downloader-${{ github.run_number }}.zip
+
+      - name: Upload UTF-8 firmware directory
+        uses: actions/upload-artifact@main
+        with:
+          name: Bestdori-Music-Downloader-UTF8-${{ github.run_number }}.zip
+          path: Bestdori-Music-Downloader-UTF8-${{ github.run_number }}.zip
+
+
+
+          
