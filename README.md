@@ -79,7 +79,7 @@ bmd.ps1 [-listFile] <Object> [[-mainServer] <String>] [[-customAlbumName] <Strin
 
 ### 疑难解答
 #### 无法在我的电脑运行 PowerShell 脚本。系统提示因为在此系统上禁止运行脚本。
-PowerShell 默认不允许使用脚本，可使用 PowerShell 执行以下命令解除锁定。详细信息可前去 [https:/go.microsoft.com/fwlink/?LinkID=135170](https:/go.microsoft.com/fwlink/?LinkID=135170) 了解。
+PowerShell 默认不允许使用脚本，可使用 PowerShell 执行以下命令解除锁定。详细信息可前去 [https://go.microsoft.com/fwlink/?LinkID=135170](https://go.microsoft.com/fwlink/?LinkID=135170) 了解。
 ```PowerShell
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```
