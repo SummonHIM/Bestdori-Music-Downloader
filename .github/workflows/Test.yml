@@ -26,13 +26,13 @@ jobs:
           todos bmd.ps1
           zip -r Bestdori-Music-Downloader-UTF8-$GITHUB_RUN_NUMBER.zip bmd.ps1 README.md
 
-      - name: Upload firmware directory
+      - name: Upload zip file
         uses: actions/upload-artifact@main
         with:
           name: Bestdori-Music-Downloader-Build${{ github.run_number }}
           path: Bestdori-Music-Downloader-${{ github.run_number }}.zip
 
-      - name: Upload UTF-8 firmware directory
+      - name: Upload UTF-8 zip file
         uses: actions/upload-artifact@main
         with:
           name: Bestdori-Music-Downloader-UTF8-Build${{ github.run_number }}
