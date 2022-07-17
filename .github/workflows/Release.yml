@@ -20,7 +20,7 @@ jobs:
       - name: Pack script to zip
         run: |
           todos bmd.ps1
-          zip -r Bestdori-Music-Downloader-$GITHUB_EVENT_INPUTS_RELEASEVERSION.zip bmd.ps1 README.md
+          zip -r Bestdori-Music-Downloader-${{ github.event.inputs.releaseVersion }}.zip bmd.ps1 README.md
 
       - name: Transcode to UTF-8 and pack script to zip
         run: |
@@ -28,7 +28,7 @@ jobs:
           rm -rf bmd.ps1
           mv bmd.utf8.ps1 bmd.ps1
           todos bmd.ps1
-          zip -r Bestdori-Music-Downloader-UTF8-$GITHUB_EVENT_INPUTS_RELEASEVERSION.zip bmd.ps1 README.md
+          zip -r Bestdori-Music-Downloader-UTF8-${{ github.event.inputs.releaseVersion }}.zip bmd.ps1 README.md
 
       - name: Create release
         id: create_release
