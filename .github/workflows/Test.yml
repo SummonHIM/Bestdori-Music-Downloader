@@ -29,13 +29,13 @@ jobs:
       - name: Upload firmware directory
         uses: actions/upload-artifact@main
         with:
-          name: Bestdori-Music-Downloader-${{ github.run_number }}.zip
+          name: Bestdori-Music-Downloader-Build${{ github.run_number }}
           path: Bestdori-Music-Downloader-${{ github.run_number }}.zip
 
       - name: Upload UTF-8 firmware directory
         uses: actions/upload-artifact@main
         with:
-          name: Bestdori-Music-Downloader-UTF8-${{ github.run_number }}.zip
+          name: Bestdori-Music-Downloader-UTF8-Build${{ github.run_number }}
           path: Bestdori-Music-Downloader-UTF8-${{ github.run_number }}.zip
 
 
