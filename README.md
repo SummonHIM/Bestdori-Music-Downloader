@@ -7,7 +7,7 @@ A script that automatically downloads music from Bestdori and fills in the music
 ### Download
 [GitHub Releases](https://github.com/SummonHIM/Bestdori-Music-Downloader/releases/latest)
 
-Download UTF-8 Version if your using UTF-8 PC.
+Default version is GBK. Download UTF-8 Version if your using UTF-8 PC.
 
 ### Install eyeD3
 eyeD3 is a Python tool for working with audio files, specifically MP3 files containing ID3 metadata (i.e. song info). This script uses eyeD3 to edit song information.(Official website: [https://eyed3.readthedocs.io/en/latest/index.html](https://eyed3.readthedocs.io/en/latest/index.html))
@@ -15,15 +15,7 @@ eyeD3 is a Python tool for working with audio files, specifically MP3 files cont
 2. Open the Terminal, Enter `pip install eyeD3` to install eyeD3.
 
 ### Usage
-#### PowerShell version
-Easy use tutorial: [https://github.com/SummonHIM/Bestdori-Music-Downloader/wiki/How-to-create-song-id-file-(Easy-use-tutorial)](https://github.com/SummonHIM/Bestdori-Music-Downloader/wiki/How-to-create-song-id-file-(Easy-use-tutorial))
-
-Full use sample:
-```PowerShell
-Start PowerShell
-PS> cd Path\to\Script
-PS> .\bmd.ps1 -listFile listFile.sample.json -mainServer en -customAlbumName "BanG Dream!" -forceReDownload -clean
-```
+Easy use tutorial: [https://github.com/SummonHIM/Bestdori-Music-Downloader/wiki/Easy-use-tutorial](https://github.com/SummonHIM/Bestdori-Music-Downloader/wiki/Easy-use-tutorial)
 
 Parameter:
 ```PowerShell
@@ -40,12 +32,12 @@ bmd.ps1 [-listFile] <Object> [[-mainServer] <Object>] [[-customAlbumName] <strin
 ```
 
 ## 中文
-一个能从 Bestdori 上自动下载歌曲并填入歌曲信息（歌曲标题、歌手、专辑、作曲人员和封面）的脚本。
+一个能从 Bestdori 上自动下载歌曲并填入歌曲信息（歌曲标题、歌手、专辑、作曲人员和封面）的 PowerShell 脚本。
 
 ### 下载
 [GitHub Releases](https://github.com/SummonHIM/Bestdori-Music-Downloader/releases/latest)
 
-一般情况只需下载普通版（GBK）即可。若你的电脑默认使用UTF-8编解码则下载UTF-8版本。
+一般情况只需下载普通版（GBK）即可。若你的电脑默认使用 UTF-8 编解码则下载 UTF-8 版本。
 
 ### 安装前置软件（eyeD3）
 eyeD3 是一个 Python 工具，用于处理包含ID3元数据（即歌曲信息）的 MP3 文件。本脚本使用 eyeD3 软件来编辑歌曲信息。（官网：[https://eyed3.readthedocs.io/en/latest/index.html](https://eyed3.readthedocs.io/en/latest/index.html)）
@@ -53,15 +45,7 @@ eyeD3 是一个 Python 工具，用于处理包含ID3元数据（即歌曲信息
 2. 打开命令行终端，键入`pip install eyeD3`并回车。等待安装结束即可.
 
 ### 使用方法
-#### PowerShell 版本
-简易使用教程：[简易使用教程](https://github.com/SummonHIM/Bestdori-Music-Downloader/wiki/%E5%A6%82%E4%BD%95%E5%88%9B%E5%BB%BA%E6%AD%8C%E6%9B%B2ID%E6%96%87%E4%BB%B6%EF%BC%88%E7%AE%80%E6%98%93%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B%EF%BC%89)
-
-最全使用范例
-```PowerShell
-打开 PowerShell
-PS> cd 到\脚本的\路径
-PS> .\bmd.ps1 -listFile listFile.sample.json -mainServer cn -customAlbumName "BanG Dream!" -forceReDownload -clean
-```
+简易使用教程：[简易使用教程](https://github.com/SummonHIM/Bestdori-Music-Downloader/wiki/%E7%AE%80%E6%98%93%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B)
 
 参数介绍
 ```PowerShell
@@ -84,5 +68,5 @@ PowerShell 默认不允许使用脚本，可使用 PowerShell 执行以下命令
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```
 
-#### 无法在Win7、Win8运行这个脚本。
+#### 无法在Win7、Win8运行这个脚本。脚本提示我的 PowerShell 版本过低
 Win7 和 Win8 用户可以前去 [https://docs.microsoft.com/powershell/scripting/windows-powershell/wmf/setup/install-configure?view=powershell-5.1](https://docs.microsoft.com/powershell/scripting/windows-powershell/wmf/setup/install-configure?view=powershell-5.1) 下载并更新你的 PowerShell 版本（虽然能运行，但是脚本无法更改语言）。XP 用户请考虑升级 Win10
