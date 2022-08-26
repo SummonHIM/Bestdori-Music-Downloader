@@ -9,6 +9,8 @@ A script that automatically downloads music from Bestdori and fills in the music
 
 Default version is GBK. Download UTF-8 Version if your using UTF-8 PC.
 
+UTF-8 version has some transcode bug.
+
 ### Install eyeD3
 eyeD3 is a Python tool for working with audio files, specifically MP3 files containing ID3 metadata (i.e. song info). This script uses eyeD3 to edit song information.(Official website: [https://eyed3.readthedocs.io/en/latest/index.html](https://eyed3.readthedocs.io/en/latest/index.html))
 1. Download and install Python.（[https://www.python.org/downloads](https://www.python.org/downloads)）
@@ -27,6 +29,8 @@ bmd.ps1 [-listFile] <Object> [[-mainServer] <Object>] [[-customAlbumName] <strin
 -forceReDownload			Enable forced redownload. Will redownload even if the file exists.
 -clean					Clean up downloaded data when script finished
 -ignore					Ignore error's pause
+-moreinfo				Show more information when script execution.
+-defaultJacket				Specify default song image ID. Will auto reset to zero if not exist.
 
 # Or use "Get-Help .\bmd.ps1 -full" in PowerShell to show full help.
 ```
@@ -38,6 +42,8 @@ bmd.ps1 [-listFile] <Object> [[-mainServer] <Object>] [[-customAlbumName] <strin
 [GitHub Releases](https://github.com/SummonHIM/Bestdori-Music-Downloader/releases/latest)
 
 一般情况只需下载普通版（GBK）即可。若你的电脑默认使用 UTF-8 编解码则下载 UTF-8 版本。
+
+UTF-8 版可能会有转码Bug。
 
 ### 安装前置软件（eyeD3）
 eyeD3 是一个 Python 工具，用于处理包含ID3元数据（即歌曲信息）的 MP3 文件。本脚本使用 eyeD3 软件来编辑歌曲信息。（官网：[https://eyed3.readthedocs.io/en/latest/index.html](https://eyed3.readthedocs.io/en/latest/index.html)）
@@ -57,6 +63,8 @@ bmd.ps1 [-listFile] <Object> [[-mainServer] <String>] [[-customAlbumName] <Strin
 -forceReDownload			启用强制重新下载。即使文件存在也将重新下载。
 -clean					脚本完成后清理下载数据。
 -ignore					当有错误时不暂停运行脚本。
+-moreinfo				脚本执行时显示更多信息。
+-defaultJacket				指定默认歌曲图片ID。若不存在则为0。
 
 # 或在 PowerShell 中键入 `Get-Help .\bmd.ps1 -full` 来显示更详细的帮助。
 ```

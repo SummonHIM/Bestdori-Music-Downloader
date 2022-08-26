@@ -24,16 +24,24 @@
     启用强制重新下载。即使文件存在也将重新下载。
 
     .PARAMETER clean
-    Clean up downloaded data when script finished
+    Clean up downloaded data when script finished.
     脚本完成后清理下载数据。
 
     .PARAMETER ignore
-    Ignore error's pause
+    Ignore error's pause.
     当有错误时不暂停运行脚本。
+
+    .PARAMETER moreInfo
+    Show more information when script execution.
+    脚本执行时显示更多信息。
+
+    .PARAMETER defaultJacket
+    Specify default song image ID. Will auto reset to zero if not exist.
+    指定默认歌曲图片ID。若不存在则为0。
 
     .INPUTS
     Input -listFile Specify the song ID file.
-    输入 -listFile 指定的歌曲ID文件
+    输入 -listFile 指定的歌曲ID文件。
     
     .OUTPUTS
     Origin Folder - Save origin music file to Origin folder.
@@ -61,7 +69,9 @@ param(
     [string]$customAlbumName = "バンドリ！　ガールズバンドパーティ！",
     [switch]$forceReDownload = $false,
     [switch]$clean = $false,
-    [switch]$ignore = $false
+    [switch]$ignore = $false,
+    [switch]$moreInfo = $false,
+    [int]$defaultJacket = 0
 )
 
 if ($host.Version -le 5.1) {
@@ -90,6 +100,7 @@ if ( $getSysLang.LCID -eq 2052 ) {
     $langEyeD3NotFound = "未找到 eyeD3！ 无法写入歌曲信息..."
     $langSongInfo = " 歌曲信息..."
     $langEnableClean = "已启用清理，正在删除 Jacket 和 Origin 文件夹..."
+    $langServerNotFound = "指定的服务器未找到。"
 } else {
     $langFolder = "Folder"
     $langNotFoundMkdir = "not found, Creating..."
@@ -104,6 +115,7 @@ if ( $getSysLang.LCID -eq 2052 ) {
     $langEyeD3NotFound = "eyeD3 Not found! Can't fill in song information."
     $langSongInfo = " song information..."
     $langEnableClean = "Clean is enable, removing Jacket and Origin..."
+    $langServerNotFound = "The server you specified was not found."
 }
 
 function downloadSongs {
@@ -111,7 +123,7 @@ function downloadSongs {
     $isOriginExist = Test-Path Origin
     if (! $isOriginExist) {
         Write-Host "$langFolder Origin $langNotFoundMkdir" -ForegroundColor Yellow
-        mkdir Origin > $null
+        if ($moreInfo) { mkdir Origin } else { mkdir Origin > $null }
     }
     
     # Generate music download url.
@@ -132,7 +144,7 @@ function downloadImgs {
     $isJacketExist = Test-Path Jacket
     if (! $isJacketExist) {
         Write-Host "$langFolder Jacket $langNotFoundMkdir" -ForegroundColor Yellow
-        mkdir Jacket > $null
+        if ($moreInfo) { mkdir Jacket } else { mkdir Jacket > $null }
     }
 
     # Generate music jacket download url.
@@ -147,7 +159,7 @@ function downloadImgs {
         # If music jacket is bestdori 404(html), try redownload.
         $CheckJacket = Get-Content "Jacket\$songInfo_jacketImage.png" | Select-String DOCTYPE
         if ($CheckJacket) {
-            Write-Host "$langJacketTypeError $langJacketTryRedown" -ForegroundColor Red
+            Write-Error "$langJacketTypeError $langJacketTryRedown"
             if (! $ignore) { Pause }
             Write-Host "$langDownloading $musicJacketUrl $langTo Jacket\$songInfo_jacketImage.png..." -ForegroundColor Green
             Invoke-WebRequest "$musicJacketUrl" -OutFile "Jacket\$songInfo_jacketImage.png"
@@ -159,12 +171,11 @@ function downloadImgs {
 }
 
 function writeSongInfo {
-    Write-Host ""
     # If folder "Output" not exist, mkdir.
     $isOutputExist = Test-Path Output
     if (! $isOutputExist) {
         Write-Host "$langFolder Output $langNotFoundMkdir" -ForegroundColor Yellow
-        mkdir Output > $null
+        if ($moreInfo) { mkdir Output } else { mkdir Output > $null }
     }
 
     # Copy music to Output folder
@@ -174,17 +185,21 @@ function writeSongInfo {
     $CheckPNG = Get-Content "Jacket\$songInfo_jacketImage.png" | Select-String DOCTYPE
     $CheckEyeD3 = eyed3 --version
     if ($CheckPNG) {
-        Write-Host "$langJacketTypeError $langJacketSkip" -ForegroundColor Red
+        Write-Error "$langJacketTypeError $langJacketSkip"
         if (! $ignore) { Pause }
         Write-Host "$langJacketWriting" -ForegroundColor Green
-        eyeD3 --title "$songInfo_musicTitle" --artist "$bandName" --album "$customAlbumName" --composer "$songInfo_lyricist;$songInfo_composer;$songInfo_arranger" --v2 --to-v2.3 "Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3"
+        $execEyeD3Cmd = eyeD3 --title "$songInfo_musicTitle" --artist "$bandName" --album "$customAlbumName" --composer "$songInfo_lyricist;$songInfo_composer;$songInfo_arranger" --v2 --to-v2.3 "Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3"
+        if ($moreInfo) { $execEyeD3Cmd } else { $execEyeD3Cmd > $null }
+        if (($ignore) -or ($LastExitCode -ne 0)) { Pause }
     }
     elseif ($CheckEyeD3) {
         Write-Host "$langJacketWriting" -ForegroundColor Green
-        eyeD3 --title "$songInfo_musicTitle" --artist "$bandName" --album "$customAlbumName" --composer "$songInfo_lyricist;$songInfo_composer;$songInfo_arranger" --add-image "Jacket\$songInfo_jacketImage.png:FRONT_COVER" --v2 --to-v2.3 "Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3"
+        $execEyeD3Cmd = eyeD3 --title "$songInfo_musicTitle" --artist "$bandName" --album "$customAlbumName" --composer "$songInfo_lyricist;$songInfo_composer;$songInfo_arranger" --add-image "Jacket\$songInfo_jacketImage.png:FRONT_COVER" --v2 --to-v2.3 "Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3"
+        if ($moreInfo) { $execEyeD3Cmd } else { $execEyeD3Cmd > $null }
+        if (($ignore) -or ($LastExitCode -ne 0)) { Pause }
     }
     else {
-        Write-Host "$langEyeD3NotFound" -ForegroundColor Red
+        Write-Error "$langEyeD3NotFound"
         if (! $ignore) { Pause }
     }
 }
@@ -192,6 +207,15 @@ function writeSongInfo {
 # Get song list in $listFile
 $getSongList = Get-Content $listFile | ConvertFrom-Json
 $bandInfo = Invoke-RestMethod "https://bestdori.com/api/bands/all.1.json"
+if ($mainServer -eq "jp") { $songInfoLanguage = 0 }
+elseif ($mainServer -eq "en") { $songInfoLanguage = 1 }
+elseif ($mainServer -eq "tw") { $songInfoLanguage = 2 }
+elseif ($mainServer -eq "cn") { $songInfoLanguage = 3 }
+elseif ($mainServer -eq "kr") { $songInfoLanguage = 4 }
+else {
+    Write-Error $langServerNotFound
+    exit 1
+}
 foreach ($songList in $getSongList.songs) {
     Write-Host ""
     # Download song information from https://bestdori.com/api/songs/$songList.json
@@ -201,17 +225,23 @@ foreach ($songList in $getSongList.songs) {
     $songInfo_bgmId = $songInfo.bgmId
     # Get bandName
     $bandNameNG = $bandInfo.($songInfo.bandId)
-    $bandName = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($bandNameNG.bandName[0]))
+    $bandName = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($bandNameNG.bandName[$songInfoLanguage]))
     $bandName_RenameAble = $bandName.replace('\', '-').replace('/', '-').replace(':', '：').replace('*', '＊').replace('?', '？').replace('"', '`').replace('<', '《').replace('>', '》').replace('|', '-')
     # Get musicTitle
-    $songInfo_musicTitle = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($songInfo.musicTitle[0]))
+    $songInfo_musicTitle = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($songInfo.musicTitle[$songInfoLanguage]))
     $songInfo_musicTitle_RenameAble = $songInfo_musicTitle.replace('\', '-').replace('/', '-').replace(':', '：').replace('*', '＊').replace('?', '？').replace('"', '`').replace('<', '《').replace('>', '》').replace('|', '-')
     # Get composer
-    $songInfo_lyricist = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($songInfo.lyricist[0]))
-    $songInfo_composer = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($songInfo.composer[0]))
-    $songInfo_arranger = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($songInfo.arranger[0]))
+    $songInfo_lyricist = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($songInfo.lyricist[$songInfoLanguage]))
+    $songInfo_composer = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($songInfo.composer[$songInfoLanguage]))
+    $songInfo_arranger = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($songInfo.arranger[$songInfoLanguage]))
     # Get front cover image
-    $songInfo_jacketImage = $songInfo.jacketImage[0].replace('Introduction', 'introduction')
+    if ($songInfo.jacketImage[$defaultJacket]) {
+        $songInfo_jacketImage = $songInfo.jacketImage[$defaultJacket].replace('Introduction', 'introduction')
+    }
+    else {
+        $songInfo_jacketImage = $songInfo.jacketImage[0].replace('Introduction', 'introduction')
+    }
+    
     # Calculate front cover image's package id
     $songListTestInt = $songList / 10
     if ($songListTestInt -isnot [int]) {
@@ -222,7 +252,7 @@ foreach ($songList in $getSongList.songs) {
     }
     # Collect all information and print
     $echoAllInfo = '{"bgmId": "' + $songInfo.bgmId + '", "bandId": "' + $songInfo.bandId + '", "bandName": "' + $bandName + '", "bandName_RenameAble": "' + $bandName_RenameAble + '", "musicTitle": "' + $songInfo_musicTitle + '", "songInfo_musicTitle_RenameAble": "' + $songInfo_musicTitle_RenameAble + '", "lyricist": "' + $songInfo_lyricist + '", "composer": "' + $songInfo_composer + '", "arranger": "' + $songInfo_arranger + '", "jacketImage": "' + $songInfo.jacketImage + '", "songJacketPkgID": "' + $songJacketPkgID + '"}' | ConvertFrom-Json
-    Write-Output $echoAllInfo
+    if ($moreInfo) { Write-Output $echoAllInfo }
     
     downloadSongs
     downloadImgs
@@ -233,5 +263,7 @@ if ($clean) {
     Write-Host ""
     Write-Host "$langEnableClean" -ForegroundColor Yellow
     Remove-Item Jacket -Recurse
+    if (($ignore) -or ($LastExitCode -ne 0)) { Pause }
     Remove-Item Origin -Recurse
+    if (($ignore) -or ($LastExitCode -ne 0)) { Pause }
 }
