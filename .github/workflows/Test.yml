@@ -107,7 +107,7 @@ jobs:
           name: Bestdori-Music-Downloader-CRLF-SHIFT-JIS-Build${{ github.run_number }}
           path: Bestdori-Music-Downloader-CRLF-SHIFT-JIS-${{ github.run_number }}.zip
 
-  pack-shiftjis:
+  pack-euckr:
     runs-on: ubuntu-latest
     needs: build-taglibsharp
     steps:
