@@ -28,10 +28,10 @@ jobs:
       run: dotnet test --verbosity normal
 
     - name: Upload Results
-        uses: actions/upload-artifact@v3
-        with:
-          name: actions/upload-artifact
-          path: src/TaglibSharp/bin/Release/netstandard2.0/TagLibSharp.dll
+      uses: actions/upload-artifact@v3
+      with:
+        name: taglibsharp.dll
+        path: src/TaglibSharp/bin/Release/netstandard2.0/TagLibSharp.dll
 
   pack-utf8:
     runs-on: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          name: taglibsharp
+          name: taglibsharp.dll
 
       - name: Pack script to zip
         run: |
@@ -68,7 +68,7 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          name: taglibsharp
+          name: taglibsharp.dll
 
       - name: Pack script to zip
         run: |
@@ -93,7 +93,7 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          name: taglibsharp
+          name: taglibsharp.dll
 
       - name: Pack script to zip
         run: |
@@ -118,7 +118,7 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          name: taglibsharp
+          name: taglibsharp.dll
 
       - name: Pack script to zip
         run: |
