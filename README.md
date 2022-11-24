@@ -5,16 +5,11 @@
 A script that automatically downloads music from Bestdori and fills in the music information.(Song title, Artist, Album, Composer and Front cover)
 
 ### Download
-[GitHub Releases](https://github.com/SummonHIM/Bestdori-Music-Downloader/releases/latest) | [![Release](https://github.com/SummonHIM/Bestdori-Music-Downloader/actions/workflows/Release.yml/badge.svg)](https://github.com/SummonHIM/Bestdori-Music-Downloader/actions/workflows/Release.yml)
+[![Release](https://github.com/SummonHIM/Bestdori-Music-Downloader/actions/workflows/Release.yml/badge.svg)](https://github.com/SummonHIM/Bestdori-Music-Downloader/actions/workflows/Release.yml)
 
-Default version is GBK. Download UTF-8 Version if your using UTF-8 PC.
+Provide `UTF-8`, `GBK`, `Shift-JIS` and `EUC-KR` version.
 
-UTF-8 version has some transcode bug.
-
-### Usage
-Easy use tutorial: [https://github.com/SummonHIM/Bestdori-Music-Downloader/wiki/Easy-use-tutorial](https://github.com/SummonHIM/Bestdori-Music-Downloader/wiki/Easy-use-tutorial)
-
-Parameter:
+### Parameter
 ```PowerShell
 bmd.ps1 [-listFile] <Object> [[-mainServer] <Object>] [[-customAlbumName] <string>] [-forceReDownload] [-clean] [<CommonParameters>]
 
@@ -29,6 +24,15 @@ bmd.ps1 [-listFile] <Object> [[-mainServer] <Object>] [[-customAlbumName] <strin
 
 # Or use "Get-Help .\bmd.ps1 -full" in PowerShell to show full help.
 ```
+### Easy use tutorial
+[Click here to check the Easy use tutorial](https://github.com/SummonHIM/Bestdori-Music-Downloader/wiki/Easy-use-tutorial) | [Click here to check the song ID template](https://github.com/SummonHIM/Bestdori-Music-Downloader/blob/master/listFile.sample.json)
+
+### Q&A
+#### PowerShell say: "Cannot be loaded because running scripts is disabled on this system."
+You need to exec this command on PowerShell to unlock PowerShell scripts usage restrictions. Learn more on [https://go.microsoft.com/fwlink/?LinkID=135170](https://go.microsoft.com/fwlink/?LinkID=135170).
+```PowerShell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
 
 ## 中文
 一个能从 Bestdori 上自动下载歌曲并填入歌曲信息（歌曲标题、歌手、专辑、作曲人员和封面）的 PowerShell 脚本。
@@ -36,14 +40,9 @@ bmd.ps1 [-listFile] <Object> [[-mainServer] <Object>] [[-customAlbumName] <strin
 ### 下载
 [![Release](https://github.com/SummonHIM/Bestdori-Music-Downloader/actions/workflows/Release.yml/badge.svg)](https://github.com/SummonHIM/Bestdori-Music-Downloader/actions/workflows/Release.yml)
 
-一般情况只需下载普通版（GBK）即可。若你的电脑默认使用 UTF-8 编解码则下载 UTF-8 版本。
+提供`UTF-8`、`GBK`、`Shift-JIS`和`EUC-KR`编码。请根据你的操作系统按需下载。
 
-UTF-8 版可能会有转码Bug。
-
-### 使用方法
-简易使用教程：[简易使用教程](https://github.com/SummonHIM/Bestdori-Music-Downloader/wiki/%E7%AE%80%E6%98%93%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B)
-
-参数介绍
+### 参数介绍
 ```PowerShell
 bmd.ps1 [-listFile] <Object> [[-mainServer] <String>] [[-customAlbumName] <String>] [-forceReDownload] [-clean] [-ignore] [<CommonParameters>]
 
@@ -58,6 +57,8 @@ bmd.ps1 [-listFile] <Object> [[-mainServer] <String>] [[-customAlbumName] <Strin
 
 # 或在 PowerShell 中键入 `Get-Help .\bmd.ps1 -full` 来显示更详细的帮助。
 ```
+#### 简易使用教程
+[单击查看简易使用教程](https://github.com/SummonHIM/Bestdori-Music-Downloader/wiki/%E7%AE%80%E6%98%93%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B) | [单击查看歌曲ID文件模板](https://github.com/SummonHIM/Bestdori-Music-Downloader/blob/master/listFile.sample.json)
 
 ### 疑难解答
 #### 无法在我的电脑运行 PowerShell 脚本。系统提示因为在此系统上禁止运行脚本。
