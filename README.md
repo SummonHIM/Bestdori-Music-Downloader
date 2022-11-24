@@ -5,7 +5,7 @@
 A script that automatically downloads music from Bestdori and fills in the music information.(Song title, Artist, Album, Composer and Front cover)
 
 ### Download
-[GitHub Releases](https://github.com/SummonHIM/Bestdori-Music-Downloader/releases/latest)
+[GitHub Releases](https://github.com/SummonHIM/Bestdori-Music-Downloader/releases/latest) | [![Release](https://github.com/SummonHIM/Bestdori-Music-Downloader/actions/workflows/Release.yml/badge.svg)](https://github.com/SummonHIM/Bestdori-Music-Downloader/actions/workflows/Release.yml)
 
 Default version is GBK. Download UTF-8 Version if your using UTF-8 PC.
 
@@ -34,7 +34,7 @@ bmd.ps1 [-listFile] <Object> [[-mainServer] <Object>] [[-customAlbumName] <strin
 一个能从 Bestdori 上自动下载歌曲并填入歌曲信息（歌曲标题、歌手、专辑、作曲人员和封面）的 PowerShell 脚本。
 
 ### 下载
-[GitHub Releases](https://github.com/SummonHIM/Bestdori-Music-Downloader/releases/latest)
+[![Release](https://github.com/SummonHIM/Bestdori-Music-Downloader/actions/workflows/Release.yml/badge.svg)](https://github.com/SummonHIM/Bestdori-Music-Downloader/actions/workflows/Release.yml)
 
 一般情况只需下载普通版（GBK）即可。若你的电脑默认使用 UTF-8 编解码则下载 UTF-8 版本。
 
