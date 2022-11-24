@@ -28,7 +28,7 @@ jobs:
     - name: Run unit tests
       run: dotnet test --verbosity normal
 
-    - name: Upload Results
+    - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
         name: taglibsharp.dll
