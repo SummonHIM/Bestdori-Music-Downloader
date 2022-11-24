@@ -74,7 +74,7 @@ jobs:
       - name: Pack script to zip
         run: |
           todos bmd.ps1
-          iconv -f utf-8 -t gbk -o bmd.ps1
+          iconv bmd.ps1 -f utf-8 -t gbk -o bmd.ps1
           zip -r Bestdori-Music-Downloader-CRLF-GBK-$GITHUB_RUN_NUMBER.zip bmd.ps1 README.md TagLibSharp.dll
 
       - name: Upload zip file
@@ -99,7 +99,7 @@ jobs:
       - name: Pack script to zip
         run: |
           todos bmd.ps1
-          iconv -f utf-8 -t shift-jis -o bmd.ps1
+          iconv bmd.ps1 -f utf-8 -t shift-jis -o bmd.ps1
           zip -r Bestdori-Music-Downloader-CRLF-SHIFT-JIS-$GITHUB_RUN_NUMBER.zip bmd.ps1 README.md TagLibSharp.dll
 
       - name: Upload zip file
@@ -124,7 +124,7 @@ jobs:
       - name: Pack script to zip
         run: |
           todos bmd.ps1
-          iconv -f utf-8 -t euc-kr -o bmd.ps1
+          iconv bmd.ps1 -f utf-8 -t euc-kr -o bmd.ps1
           zip -r Bestdori-Music-Downloader-CRLF-EUC-KR-$GITHUB_RUN_NUMBER.zip bmd.ps1 README.md TagLibSharp.dll
 
       - name: Upload zip file
