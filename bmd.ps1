@@ -1,63 +1,63 @@
 <#
     .SYNOPSIS
     A script that automatically downloads music from Bestdori and fills in the music information.
-    Ò»¸öÄÜ´Ó Bestdori ÉÏ×Ô¶¯ÏÂÔØÒôÀÖ²¢ÌîÈëÒôÀÖÐÅÏ¢µÄ½Å±¾¡£
+    ä¸€ä¸ªèƒ½ä»Ž Bestdori ä¸Šè‡ªåŠ¨ä¸‹è½½éŸ³ä¹å¹¶å¡«å…¥éŸ³ä¹ä¿¡æ¯çš„è„šæœ¬ã€‚
 
     .DESCRIPTION
     A script that automatically downloads music from Bestdori and fills in the music information.(Song title, Artist, Album, Composer and Front cover)
-    Ò»¸öÄÜ´Ó Bestdori ÉÏ×Ô¶¯ÏÂÔØÒôÀÖ²¢ÌîÈëÒôÀÖÐÅÏ¢£¨¸èÇú±êÌâ¡¢¸èÊÖ¡¢×¨¼­¡¢×÷ÇúÈËÔ±ºÍ·âÃæ£©µÄ½Å±¾¡£
+    ä¸€ä¸ªèƒ½ä»Ž Bestdori ä¸Šè‡ªåŠ¨ä¸‹è½½éŸ³ä¹å¹¶å¡«å…¥éŸ³ä¹ä¿¡æ¯ï¼ˆæ­Œæ›²æ ‡é¢˜ã€æ­Œæ‰‹ã€ä¸“è¾‘ã€ä½œæ›²äººå‘˜å’Œå°é¢ï¼‰çš„è„šæœ¬ã€‚
 
     .PARAMETER listFile
     Specify the song ID file.
-    Ö¸¶¨¸èÇúIDÎÄ¼þ¡£
+    æŒ‡å®šæ­Œæ›²IDæ–‡ä»¶ã€‚
 
     .PARAMETER mainServer
     Specify the download server.
-    Ö¸¶¨ÏÂÔØ·þÎñÆ÷¡£
+    æŒ‡å®šä¸‹è½½æœåŠ¡å™¨ã€‚
 
     .PARAMETER customAlbumName
     Specify the album name.
-    Ö¸¶¨×¨¼­Ãû³Æ¡£
+    æŒ‡å®šä¸“è¾‘åç§°ã€‚
 
     .PARAMETER forceReDownload
     Enable forced redownload. Will redownload even if the file exists.
-    ÆôÓÃÇ¿ÖÆÖØÐÂÏÂÔØ¡£¼´Ê¹ÎÄ¼þ´æÔÚÒ²½«ÖØÐÂÏÂÔØ¡£
+    å¯ç”¨å¼ºåˆ¶é‡æ–°ä¸‹è½½ã€‚å³ä½¿æ–‡ä»¶å­˜åœ¨ä¹Ÿå°†é‡æ–°ä¸‹è½½ã€‚
 
     .PARAMETER clean
     Clean up downloaded data when script finished.
-    ½Å±¾Íê³ÉºóÇåÀíÏÂÔØÊý¾Ý¡£
+    è„šæœ¬å®ŒæˆåŽæ¸…ç†ä¸‹è½½æ•°æ®ã€‚
 
     .PARAMETER ignore
     Ignore error's pause.
-    µ±ÓÐ´íÎóÊ±²»ÔÝÍ£ÔËÐÐ½Å±¾¡£
+    å½“æœ‰é”™è¯¯æ—¶ä¸æš‚åœè¿è¡Œè„šæœ¬ã€‚
 
     .PARAMETER moreInfo
     Show more information when script execution.
-    ½Å±¾Ö´ÐÐÊ±ÏÔÊ¾¸ü¶àÐÅÏ¢¡£
+    è„šæœ¬æ‰§è¡Œæ—¶æ˜¾ç¤ºæ›´å¤šä¿¡æ¯ã€‚
 
     .PARAMETER defaultJacket
     Specify default song image ID. Will auto reset to zero if not exist.
-    Ö¸¶¨Ä¬ÈÏ¸èÇúÍ¼Æ¬ID¡£Èô²»´æÔÚÔòÎª0¡£
+    æŒ‡å®šé»˜è®¤æ­Œæ›²å›¾ç‰‡IDã€‚è‹¥ä¸å­˜åœ¨åˆ™ä¸º0ã€‚
 
     .INPUTS
     Input -listFile Specify the song ID file.
-    ÊäÈë -listFile Ö¸¶¨µÄ¸èÇúIDÎÄ¼þ¡£
+    è¾“å…¥ -listFile æŒ‡å®šçš„æ­Œæ›²IDæ–‡ä»¶ã€‚
     
     .OUTPUTS
     Origin Folder - Save origin music file to Origin folder.
-    Origin ÎÄ¼þ¼Ð - ±£´æÔ´ÒôÀÖÎÄ¼þÖÁ Origin ÎÄ¼þ¼Ð¡£
+    Origin æ–‡ä»¶å¤¹ - ä¿å­˜æºéŸ³ä¹æ–‡ä»¶è‡³ Origin æ–‡ä»¶å¤¹ã€‚
     Jacket Folder - Save origin front cover file to Origin folder.
-    Jacket ÎÄ¼þ¼Ð - ±£´æÔ´·âÃæÎÄ¼þÖÁ Origin ÎÄ¼þ¼Ð¡£
+    Jacket æ–‡ä»¶å¤¹ - ä¿å­˜æºå°é¢æ–‡ä»¶è‡³ Origin æ–‡ä»¶å¤¹ã€‚
     Output Folder - Convert and save music to Output folder.
-    Output Folder - ×ª»»²¢±£´æÒôÀÖÖÁ Output ÎÄ¼þ¼Ð¡£
+    Output Folder - è½¬æ¢å¹¶ä¿å­˜éŸ³ä¹è‡³ Output æ–‡ä»¶å¤¹ã€‚
 
     .EXAMPLE
     .\bmd.ps1 -listFile listFile.sample.json
-    Simplest/×î¼ò
+    Simplest/æœ€ç®€
 
     .EXAMPLE
     .\bmd.ps1 -listFile listFile.sample.json -mainServer cn -customAlbumName "BanG Dream!" -forceReDownload -clean
-    Fullest/×îÈ«
+    Fullest/æœ€å…¨
 
     .LINK
     https://github.com/SummonHIM/Bestdori-Music-Downloader
@@ -66,13 +66,15 @@
 param(
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$listFile,
     [Parameter(ValueFromPipeline = $true)][string]$mainServer = "jp",
-    [string]$customAlbumName = "¥Ð¥ó¥É¥ê£¡¡¡¥¬©`¥ë¥º¥Ð¥ó¥É¥Ñ©`¥Æ¥££¡",
+    [string]$customAlbumName = "ãƒãƒ³ãƒ‰ãƒªï¼ã€€ã‚¬ãƒ¼ãƒ«ã‚ºãƒãƒ³ãƒ‰ãƒ‘ãƒ¼ãƒ†ã‚£ï¼",
     [switch]$forceReDownload = $false,
     [switch]$clean = $false,
     [switch]$ignore = $false,
     [switch]$moreInfo = $false,
     [int]$defaultJacket = 0
 )
+
+[System.IO.Directory]::SetCurrentDirectory("$(Get-Location)")
 
 if ($host.Version -le 5.1) {
     Write-Output ""
@@ -87,21 +89,24 @@ if ($host.Version -le 5.1) {
 
 $getSysLang = Get-WinSystemLocale
 if ( $getSysLang.LCID -eq 2052 ) {
-    $langFolder = "ÎÄ¼þ¼Ð"
-    $langNotFoundMkdir = "Î´ÕÒµ½£¬ÕýÔÚ´´½¨"
-    $langDownloading = "ÕýÔÚÏÂÔØ"
-    $langTo = "ÖÁ"
-    $langIsAlreadyDownloaded = "ÒÑÏÂÔØ"
-    $langJacketTypeError = "Í¼Æ¬ÀàÐÍ²»ÕýÈ·£¡"
-    $langJacketTryRedown = "ÕýÔÚ³¢ÊÔÖØÐÂÏÂÔØ..."
-    $langJacketSkip = "Ìø¹ýÌí¼ÓÍ¼Æ¬¡£"
-    $langJacketWriting = "ÕýÔÚÊ¹ÓÃ eyeD3 Ð´Èë¸èÇúÐÅÏ¢..."
-    $langCopying = "ÕýÔÚ¸´ÖÆ"
-    $langEyeD3NotFound = "Î´ÕÒµ½ eyeD3£¡ ÎÞ·¨Ð´Èë¸èÇúÐÅÏ¢..."
-    $langSongInfo = " ¸èÇúÐÅÏ¢..."
-    $langEnableClean = "ÒÑÆôÓÃÇåÀí£¬ÕýÔÚÉ¾³ý Jacket ºÍ Origin ÎÄ¼þ¼Ð..."
-    $langServerNotFound = "Ö¸¶¨µÄ·þÎñÆ÷Î´ÕÒµ½¡£"
-} else {
+    $langFolder = "æ–‡ä»¶å¤¹"
+    $langNotFoundMkdir = "æœªæ‰¾åˆ°ï¼Œæ­£åœ¨åˆ›å»º"
+    $langDownloading = "æ­£åœ¨ä¸‹è½½"
+    $langTo = "è‡³"
+    $langIsAlreadyDownloaded = "å·²ä¸‹è½½"
+    $langJacketTypeError = "å›¾ç‰‡ç±»åž‹ä¸æ­£ç¡®ï¼"
+    $langJacketTryRedown = "æ­£åœ¨å°è¯•é‡æ–°ä¸‹è½½â€¦"
+    $langJacketSkip = "è·³è¿‡æ·»åŠ å›¾ç‰‡ã€‚"
+    $langJacketWriting = "æ­£åœ¨ä½¿ç”¨ TagLibSharp.dll å†™å…¥æ­Œæ›²ä¿¡æ¯â€¦"
+    $langCopying = "æ­£åœ¨å¤åˆ¶"
+    $langTagLibSharpLoading = "æ­£åœ¨åŠ è½½åº“ TagLibSharp.dllï¼"
+    $langTagLibSharpNotFound = "æœªæ‰¾åˆ°åº“ TagLibSharp.dllï¼æ— æ³•å†™å…¥æ­Œæ›²ä¿¡æ¯â€¦"
+    $langBandInfo = " ä¹é˜Ÿä¿¡æ¯â€¦"
+    $langSongInfo = " æ­Œæ›²ä¿¡æ¯â€¦"
+    $langEnableClean = "å·²å¯ç”¨æ¸…ç†ï¼Œæ­£åœ¨åˆ é™¤ Jacket å’Œ Origin æ–‡ä»¶å¤¹â€¦"
+    $langServerNotFound = "æŒ‡å®šçš„æœåŠ¡å™¨æœªæ‰¾åˆ°ã€‚"
+}
+else {
     $langFolder = "Folder"
     $langNotFoundMkdir = "not found, Creating..."
     $langDownloading = "Downloading"
@@ -110,9 +115,10 @@ if ( $getSysLang.LCID -eq 2052 ) {
     $langJacketTypeError = "Image type not correct!"
     $langJacketTryRedown = "Try redownload..."
     $langJacketSkip = "skip image adding."
-    $langJacketWriting = "Writing music information by using eyeD3..."
+    $langJacketWriting = "Writing music information by using TagLibSharp.dll..."
     $langCopying = "Copying"
-    $langEyeD3NotFound = "eyeD3 Not found! Can't fill in song information."
+    $langTagLibSharpNotFound = "Library TagLibSharp.dll Not found! Can't fill in song information."
+    $langBandInfo = " band information..."
     $langSongInfo = " song information..."
     $langEnableClean = "Clean is enable, removing Jacket and Origin..."
     $langServerNotFound = "The server you specified was not found."
@@ -183,29 +189,45 @@ function writeSongInfo {
     Copy-Item "Origin\$songInfo_bgmId.mp3" -Destination "Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3"
     # If music jacket is bestdori 404(html), skip add-image.
     $CheckPNG = Get-Content "Jacket\$songInfo_jacketImage.png" | Select-String DOCTYPE
-    $CheckEyeD3 = eyed3 --version
     if ($CheckPNG) {
         Write-Error "$langJacketTypeError $langJacketSkip"
         if (! $ignore) { Pause }
         Write-Host "$langJacketWriting" -ForegroundColor Green
-        $execEyeD3Cmd = eyeD3 --title "$songInfo_musicTitle" --artist "$bandName" --album "$customAlbumName" --composer "$songInfo_lyricist;$songInfo_composer;$songInfo_arranger" --v2 --to-v2.3 "Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3"
-        if ($moreInfo) { $execEyeD3Cmd } else { $execEyeD3Cmd > $null }
-        if (($ignore) -or ($LastExitCode -ne 0)) { Pause }
+        $writeSongInfo = [TagLib.File]::Create("Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3")
+        $writeSongInfo.Tag.Title = "$songInfo_musicTitle"
+        $writeSongInfo.Tag.Artists = "$bandName"
+        $writeSongInfo.Tag.Album = "$customAlbumName"
+        $writeSongInfo.Tag.Composers = "$songInfo_lyricist;$songInfo_composer;$songInfo_arranger"
+        $writeSongInfo.Save()
     }
-    elseif ($CheckEyeD3) {
+    elseif ($checkTagLib) {
         Write-Host "$langJacketWriting" -ForegroundColor Green
-        $execEyeD3Cmd = eyeD3 --title "$songInfo_musicTitle" --artist "$bandName" --album "$customAlbumName" --composer "$songInfo_lyricist;$songInfo_composer;$songInfo_arranger" --add-image "Jacket\$songInfo_jacketImage.png:FRONT_COVER" --v2 --to-v2.3 "Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3"
-        if ($moreInfo) { $execEyeD3Cmd } else { $execEyeD3Cmd > $null }
-        if (($ignore) -or ($LastExitCode -ne 0)) { Pause }
+        $writeSongInfo = [TagLib.File]::Create("Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3")
+        $writeSongInfo.Tag.Title = "$songInfo_musicTitle"
+        $writeSongInfo.Tag.Artists = "$bandName"
+        $writeSongInfo.Tag.Album = "$customAlbumName"
+        $writeSongInfo.Tag.Composers = "$songInfo_lyricist;$songInfo_composer;$songInfo_arranger"
+        $writeSongInfo.Tag.Pictures = [TagLib.Picture]("Jacket\$songInfo_jacketImage.png")
+        $writeSongInfo.Save()
     }
     else {
-        Write-Error "$langEyeD3NotFound"
+        Write-Error "$langTagLibSharpNotFound"
         if (! $ignore) { Pause }
     }
 }
 
+# Load TagLibSharp.dll
+$isTagLibSharpExist = Test-Path "TagLibSharp.dll"
+if ($isTagLibSharpExist) {
+    Write-Host "$langTagLibSharpLoading" -ForegroundColor Green
+    [Reflection.Assembly]::LoadFrom("TagLibSharp.dll")
+    $checkTagLib = $true
+    Write-Host ""
+}
+
 # Get song list in $listFile
 $getSongList = Get-Content $listFile | ConvertFrom-Json
+Write-Host "$langDownloading$langBandInfo" -ForegroundColor Green
 $bandInfo = Invoke-RestMethod "https://bestdori.com/api/bands/all.1.json"
 if ($mainServer -eq "jp") { $songInfoLanguage = 0 }
 elseif ($mainServer -eq "en") { $songInfoLanguage = 1 }
@@ -226,10 +248,10 @@ foreach ($songList in $getSongList.songs) {
     # Get bandName
     $bandNameNG = $bandInfo.($songInfo.bandId)
     $bandName = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($bandNameNG.bandName[$songInfoLanguage]))
-    $bandName_RenameAble = $bandName.replace('\', '-').replace('/', '-').replace(':', '£º').replace('*', '£ª').replace('?', '£¿').replace('"', '`').replace('<', '¡¶').replace('>', '¡·').replace('|', '-')
+    $bandName_RenameAble = $bandName.replace('\', '-').replace('/', '-').replace(':', 'ï¼š').replace('*', 'ï¼Š').replace('?', 'ï¼Ÿ').replace('"', '`').replace('<', 'ã€Š').replace('>', 'ã€‹').replace('|', '-')
     # Get musicTitle
     $songInfo_musicTitle = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($songInfo.musicTitle[$songInfoLanguage]))
-    $songInfo_musicTitle_RenameAble = $songInfo_musicTitle.replace('\', '-').replace('/', '-').replace(':', '£º').replace('*', '£ª').replace('?', '£¿').replace('"', '`').replace('<', '¡¶').replace('>', '¡·').replace('|', '-')
+    $songInfo_musicTitle_RenameAble = $songInfo_musicTitle.replace('\', '-').replace('/', '-').replace(':', 'ï¼š').replace('*', 'ï¼Š').replace('?', 'ï¼Ÿ').replace('"', '`').replace('<', 'ã€Š').replace('>', 'ã€‹').replace('|', '-')
     # Get composer
     $songInfo_lyricist = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($songInfo.lyricist[$songInfoLanguage]))
     $songInfo_composer = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($songInfo.composer[$songInfoLanguage]))
@@ -263,7 +285,5 @@ if ($clean) {
     Write-Host ""
     Write-Host "$langEnableClean" -ForegroundColor Yellow
     Remove-Item Jacket -Recurse
-    if (($ignore) -or ($LastExitCode -ne 0)) { Pause }
     Remove-Item Origin -Recurse
-    if (($ignore) -or ($LastExitCode -ne 0)) { Pause }
 }
