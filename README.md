@@ -5,7 +5,7 @@
 A script that automatically downloads music from Bestdori and fills in the music information.(Song title, Artist, Album, Composer and Front cover)
 
 ### Download
-[![Release](https://github.com/SummonHIM/Bestdori-Music-Downloader/actions/workflows/Release.yml/badge.svg)](https://github.com/SummonHIM/Bestdori-Music-Downloader/actions/workflows/Release.yml)
+[![Release](https://github.com/SummonHIM/Bestdori-Music-Downloader/actions/workflows/Release.yml/badge.svg)](https://github.com/SummonHIM/Bestdori-Music-Downloader/releases/latest)
 
 Provide `UTF-8`, `GBK`, `Shift-JIS` and `EUC-KR` version.
 
@@ -38,7 +38,7 @@ Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 一个能从 Bestdori 上自动下载歌曲并填入歌曲信息（歌曲标题、歌手、专辑、作曲人员和封面）的 PowerShell 脚本。
 
 ### 下载
-[![Release](https://github.com/SummonHIM/Bestdori-Music-Downloader/actions/workflows/Release.yml/badge.svg)](https://github.com/SummonHIM/Bestdori-Music-Downloader/actions/workflows/Release.yml)
+[![Release](https://github.com/SummonHIM/Bestdori-Music-Downloader/actions/workflows/Release.yml/badge.svg)](https://github.com/SummonHIM/Bestdori-Music-Downloader/releases/latest)
 
 提供`UTF-8`、`GBK`、`Shift-JIS`和`EUC-KR`编码。请根据你的操作系统按需下载。
 
