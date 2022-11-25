@@ -53,13 +53,13 @@ jobs:
       - name: Pack script to zip
         run: |
           todos bmd.ps1
-          zip -r Bestdori-Music-Downloader-CRLF-UTF-8-$GITHUB_RUN_NUMBER.zip bmd.ps1 README.md TagLibSharp.dll
+          zip -r Bestdori-Music-Downloader-CRLF-UTF-8-${{ github.event.inputs.releaseVersion }}.zip bmd.ps1 README.md TagLibSharp.dll
 
       - name: Upload zip file
         uses: actions/upload-artifact@v3
         with:
-          name: Bestdori-Music-Downloader-CRLF-UTF-8-Build${{ github.run_number }}
-          path: Bestdori-Music-Downloader-CRLF-UTF-8-${{ github.run_number }}.zip
+          name: Bestdori-Music-Downloader-CRLF-UTF-8-Build${{ github.event.inputs.releaseVersion }}
+          path: Bestdori-Music-Downloader-CRLF-UTF-8-${{ github.event.inputs.releaseVersion }}.zip
 
   pack-gbk:
     runs-on: ubuntu-latest
@@ -78,13 +78,13 @@ jobs:
         run: |
           todos bmd.ps1
           iconv -c -f utf-8 -t gbk bmd.ps1>bmd.gbk.ps1
-          zip -r Bestdori-Music-Downloader-CRLF-GBK-$GITHUB_RUN_NUMBER.zip bmd.gbk.ps1 README.md TagLibSharp.dll
+          zip -r Bestdori-Music-Downloader-CRLF-GBK-${{ github.event.inputs.releaseVersion }}.zip bmd.gbk.ps1 README.md TagLibSharp.dll
 
       - name: Upload zip file
         uses: actions/upload-artifact@v3
         with:
-          name: Bestdori-Music-Downloader-CRLF-GBK-Build${{ github.run_number }}
-          path: Bestdori-Music-Downloader-CRLF-GBK-${{ github.run_number }}.zip
+          name: Bestdori-Music-Downloader-CRLF-GBK-Build${{ github.event.inputs.releaseVersion }}
+          path: Bestdori-Music-Downloader-CRLF-GBK-${{ github.event.inputs.releaseVersion }}.zip
 
   pack-shiftjis:
     runs-on: ubuntu-latest
@@ -103,13 +103,13 @@ jobs:
         run: |
           todos bmd.ps1
           iconv -c -f utf-8 -t shift-jis bmd.ps1>bmd.jis.ps1
-          zip -r Bestdori-Music-Downloader-CRLF-SHIFT-JIS-$GITHUB_RUN_NUMBER.zip bmd.jis.ps1 README.md TagLibSharp.dll
+          zip -r Bestdori-Music-Downloader-CRLF-SHIFT-JIS-${{ github.event.inputs.releaseVersion }}.zip bmd.jis.ps1 README.md TagLibSharp.dll
 
       - name: Upload zip file
         uses: actions/upload-artifact@v3
         with:
-          name: Bestdori-Music-Downloader-CRLF-SHIFT-JIS-Build${{ github.run_number }}
-          path: Bestdori-Music-Downloader-CRLF-SHIFT-JIS-${{ github.run_number }}.zip
+          name: Bestdori-Music-Downloader-CRLF-SHIFT-JIS-Build${{ github.event.inputs.releaseVersion }}
+          path: Bestdori-Music-Downloader-CRLF-SHIFT-JIS-${{ github.event.inputs.releaseVersion }}.zip
 
   pack-euckr:
     runs-on: ubuntu-latest
@@ -128,13 +128,13 @@ jobs:
         run: |
           todos bmd.ps1
           iconv -c -f utf-8 -t euc-kr bmd.ps1>bmd.kr.ps1
-          zip -r Bestdori-Music-Downloader-CRLF-EUC-KR-$GITHUB_RUN_NUMBER.zip bmd.kr.ps1 README.md TagLibSharp.dll
+          zip -r Bestdori-Music-Downloader-CRLF-EUC-KR-${{ github.event.inputs.releaseVersion }}.zip bmd.kr.ps1 README.md TagLibSharp.dll
 
       - name: Upload zip file
         uses: actions/upload-artifact@v3
         with:
-          name: Bestdori-Music-Downloader-CRLF-EUC-KR-Build${{ github.run_number }}
-          path: Bestdori-Music-Downloader-CRLF-EUC-KR-${{ github.run_number }}.zip
+          name: Bestdori-Music-Downloader-CRLF-EUC-KR-Build${{ github.event.inputs.releaseVersion }}
+          path: Bestdori-Music-Downloader-CRLF-EUC-KR-${{ github.event.inputs.releaseVersion }}.zip
 
   upload-release:
     permissions:
@@ -149,22 +149,22 @@ jobs:
       - name: Download UTF-8 artifact
         uses: actions/download-artifact@v3
         with:
-          name: Bestdori-Music-Downloader-CRLF-UTF-8-Build${{ github.run_number }}
+          name: Bestdori-Music-Downloader-CRLF-UTF-8-Build${{ github.event.inputs.releaseVersion }}
 
       - name: Download GBK artifact
         uses: actions/download-artifact@v3
         with:
-          name: Bestdori-Music-Downloader-CRLF-GBK-Build${{ github.run_number }}
+          name: Bestdori-Music-Downloader-CRLF-GBK-Build${{ github.event.inputs.releaseVersion }}
 
       - name: Download SHIFT-JIS artifact
         uses: actions/download-artifact@v3
         with:
-          name: Bestdori-Music-Downloader-CRLF-SHIFT-JIS-Build${{ github.run_number }}
+          name: Bestdori-Music-Downloader-CRLF-SHIFT-JIS-Build${{ github.event.inputs.releaseVersion }}
 
       - name: Download EUC-KR artifact
         uses: actions/download-artifact@v3
         with:
-          name: Bestdori-Music-Downloader-CRLF-EUC-KR-Build${{ github.run_number }}
+          name: Bestdori-Music-Downloader-CRLF-EUC-KR-Build${{ github.event.inputs.releaseVersion }}
 
       - name: Release
         uses: softprops/action-gh-release@v1

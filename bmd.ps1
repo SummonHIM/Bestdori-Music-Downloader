@@ -88,7 +88,7 @@ if ($host.Version -le 5.1) {
 }
 
 $getSysLang = Get-WinSystemLocale
-if ( $getSysLang.LCID -eq 2052 ) {
+if ($getSysLang.LCID -eq 2052 -or $getSysLang.LCID -eq 4096 -or $getSysLang.LCID -eq 4 -or $getSysLang.LCID -eq 4100) {
     $langFolder = "文件夹"
     $langNotFoundMkdir = "未找到，正在创建"
     $langDownloading = "正在下载"
@@ -101,10 +101,48 @@ if ( $getSysLang.LCID -eq 2052 ) {
     $langCopying = "正在复制"
     $langTagLibSharpLoading = "正在加载库 TagLibSharp.dll！"
     $langTagLibSharpNotFound = "未找到库 TagLibSharp.dll！无法写入歌曲信息…"
-    $langBandInfo = " 乐队信息…"
-    $langSongInfo = " 歌曲信息…"
+    $langBandInfo = "乐队信息…"
+    $langSongInfo = "歌曲信息…"
     $langEnableClean = "已启用清理，正在删除 Jacket 和 Origin 文件夹…"
     $langServerNotFound = "指定的服务器未找到。"
+}
+elseif ($getSysLang.LCID -eq 3076 -or $getSysLang.LCID -eq 5124) {
+    # Processed by 繁化姬 https://zhconvert.org 
+    $langFolder = "文件夾"
+    $langNotFoundMkdir = "未找到，正在創建"
+    $langDownloading = "正在下載"
+    $langTo = "至"
+    $langIsAlreadyDownloaded = "已下載"
+    $langJacketTypeError = "圖片類型不正確！"
+    $langJacketTryRedown = "正在嘗試重新下載…"
+    $langJacketSkip = "跳過添加圖片。"
+    $langJacketWriting = "正在使用 TagLibSharp.dll 寫入歌曲訊息…"
+    $langCopying = "正在複製"
+    $langTagLibSharpLoading = "正在加載庫 TagLibSharp.dll！"
+    $langTagLibSharpNotFound = "未找到庫 TagLibSharp.dll！無法寫入歌曲訊息…"
+    $langBandInfo = "樂隊訊息…"
+    $langSongInfo = "歌曲訊息…"
+    $langEnableClean = "已啟用清理，正在刪除 Jacket 和 Origin 文件夾…"
+    $langServerNotFound = "指定的伺服器未找到。"
+}
+elseif ($getSysLang.LCID -eq 31748 -or $getSysLang.LCID -eq 1028) {
+    # Processed by 繁化姬 https://zhconvert.org 
+    $langFolder = "資料夾"
+    $langNotFoundMkdir = "未找到，正在建立"
+    $langDownloading = "正在下載"
+    $langTo = "至"
+    $langIsAlreadyDownloaded = "已下載"
+    $langJacketTypeError = "圖片類型不正確！"
+    $langJacketTryRedown = "正在嘗試重新下載…"
+    $langJacketSkip = "跳過添加圖片。"
+    $langJacketWriting = "正在使用 TagLibSharp.dll 寫入歌曲訊息…"
+    $langCopying = "正在複製"
+    $langTagLibSharpLoading = "正在載入庫 TagLibSharp.dll！"
+    $langTagLibSharpNotFound = "未找到庫 TagLibSharp.dll！無法寫入歌曲訊息…"
+    $langBandInfo = "樂隊訊息…"
+    $langSongInfo = "歌曲訊息…"
+    $langEnableClean = "已啟用清理，正在刪除 Jacket 和 Origin 資料夾…"
+    $langServerNotFound = "指定的伺服器未找到。"
 }
 else {
     $langFolder = "Folder"
