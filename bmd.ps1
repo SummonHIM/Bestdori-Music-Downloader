@@ -105,7 +105,7 @@ $lang = Data {
     successSongIDGetInfo = Song information downloaded successfully!
     errorSongIDGetInfo = No song information has been downloaded! Please check your network connection.
     infoBandTitle = Band - Title:
-    infoLyCoAr = Lyricist, Composer, Arranger：
+    infoLyCoAr = Lyricist, Composer, Arranger:
     errorTagLibNotFound = Library TagLibSharp.dll not found! Unable to write song information!
     errorParsedSongInfo = Failed to get song information! Please check your song ID, the specified download server and network connection.
     infoClean = Cleanup is enabled, deleting Jacket and Origin folders
@@ -130,7 +130,7 @@ $lang = Data {
     errorWriteByTagLib = Failed to write information!
 '@
 }
-Import-LocalizedData -BindingVariable lang -BaseDirectory Localized
+Import-LocalizedData -BindingVariable lang -BaseDirectory Localized -ErrorAction:SilentlyContinue
 
 function Format-Renameable {
     param ([Parameter(Mandatory = $true, ValueFromPipeline = $true)]$iptString)

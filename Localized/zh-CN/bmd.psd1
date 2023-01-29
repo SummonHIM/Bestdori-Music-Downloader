@@ -16,7 +16,7 @@ ConvertFrom-StringData @'
     infoSongIDGetInfo2 = 下载歌曲信息
     successSongIDGetInfo = 歌曲信息下载成功！
     errorSongIDGetInfo = 未下载到任何歌曲信息！请检查你的网络设置。
-    infoBandTitle = 乐团 - 标题:
+    infoBandTitle = 乐团 - 标题：
     infoLyCoAr = 作词、作曲、编曲：
     errorTagLibNotFound = 未找到库 TagLibSharp.dll！无法写入歌曲信息！
     errorParsedSongInfo = 获取歌曲信息失败！请检查你的歌曲 ID、指定的下载服务器和网络设置。
