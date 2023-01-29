@@ -155,6 +155,7 @@ function downloadSong {
             Return 1
         }
     }
+    if (Test-Path "Origin\.temp.mp3") { Remove-Item "Origin\.temp.mp3" }
     
     # Generate music download url.
     $downloadSongUrl = "https://bestdori.com/assets/" + $mainServer + "/sound/" + $iptSongInfo.bgmId + "_rip/" + $iptSongInfo.bgmId + ".mp3"
@@ -163,14 +164,17 @@ function downloadSong {
     if ((!(Test-Path $saveSongPath)) -or ($forceRedownload)) {
         Write-Host $lang.infoDownloadingTo1 $downloadSongUrl $lang.infoDownloadingTo2 $saveSongPath... -ForegroundColor White -NoNewline
         try {
-            Invoke-WebRequest $downloadSongUrl -OutFile $saveSongPath
+            Invoke-WebRequest $downloadSongUrl -OutFile "Origin\.temp.mp3"
+            Rename-Item -Path "Origin\.temp.mp3" -NewName $saveSongPath.Split("\")[1]
             Write-Host "  -" $lang.successDownloadingTo -ForegroundColor Green
         } catch {
             Write-Host ""
             Write-Error -Message $lang.errorDownloadingTo -Category WriteError -ErrorId 7
             if (! $Ignore) { Pause }
-            Remove-Item $saveSongPath
+            if (Test-Path $saveSongPath) { Remove-Item $saveSongPath }
             Return 2
+        } finally {
+            if (Test-Path "Origin\.temp.mp3") { Remove-Item "Origin\.temp.mp3" }
         }
     } else { Write-Host "$saveSongPath" $lang.infoDownloadFileExist -ForegroundColor Yellow }
 
@@ -195,6 +199,7 @@ function downloadJacket {
             Return 1
         }
     }
+    if (Test-Path "Jacket\.temp.png") { Remove-Item "Jacket\.temp.png" }
 
     # Generate music jacket download url.
     $downloadJacketUrl = "https://bestdori.com/assets/" + $mainServer + "/musicjacket/musicjacket" + $iptSongInfo.JacketPkgID + "_rip/assets-star-forassetbundle-startapp-musicjacket-musicjacket" + $iptSongInfo.JacketPkgID + "-" + $iptSongInfo.jacketImage + "-jacket.png"
@@ -203,14 +208,17 @@ function downloadJacket {
     if ((!(Test-Path $saveJacketPath)) -or ($forceReDownload)) {
         Write-Host $lang.infoDownloadingTo1 $downloadJacketUrl $lang.infoDownloadingTo2 $saveJacketPath... -ForegroundColor White -NoNewline
         try {
-            Invoke-WebRequest $downloadJacketUrl -OutFile $saveJacketPath
+            Invoke-WebRequest $downloadJacketUrl -OutFile "Jacket\.temp.png"
+            Rename-Item -Path "Jacket\.temp.png" -NewName $saveJacketPath.Split("\")[1]
             Write-Host "  -" $lang.successDownloadingTo -ForegroundColor Green
         } catch {
             Write-Host ""
             Write-Error -Message $lang.errorDownloadingTo -Category WriteError -ErrorId 9
             if (! $Ignore) { Pause }
-            Remove-Item $saveJacketPath
+            if (Test-Path $saveJacketPath) { Remove-Item $saveJacketPath }
             Return 2
+        } finally {
+            if (Test-Path "Jacket\.temp.png") { Remove-Item "Jacket\.temp.png" }
         }
         if (Get-Content $saveJacketPath | Select-String DOCTYPE) {
             Write-Host ""
@@ -245,6 +253,7 @@ function writeSongInfo {
             Return
         }
     }
+    if (Test-Path "Output\.temp.mp3") { Remove-Item "Output\.temp.mp3" }
 
     # Generate save path.
     $originSongPath = "Origin\" + $iptSongInfo.bgmId + ".mp3"
@@ -253,20 +262,20 @@ function writeSongInfo {
     # Copy music to Output folder
     Write-Host $lang.infoCopyTo1 $originSongPath $lang.infoCopyTo2 $outputSongPath "..." -ForegroundColor White -NoNewline
     try {
-        Copy-Item $originSongPath -Destination $outputSongPath
+        Copy-Item $originSongPath -Destination "Output\.temp.mp3"
         Write-Host "  -" $lang.successCopyTo -ForegroundColor Green
     } catch {
         Write-Host ""
         Write-Error -Message $lang.errorCopyTo -Category WriteError -ErrorId 13
         if (! $Ignore) { Pause }
-        Remove-Item $outputSongPath
+        Remove-Item "Output\.temp.mp3"
         Return
     }
     
     # If music jacket is bestdori 404(html), skip add-image.
     Write-Host $lang.infoWriteByTagLib "..." -ForegroundColor White -NoNewline
     try {
-        $writingSongInfo = [TagLib.File]::Create($outputSongPath)
+        $writingSongInfo = [TagLib.File]::Create("Output\.temp.mp3")
         $writingSongInfo.Tag.Title = $iptSongInfo.musicTitle
         $writingSongInfo.Tag.Artists = $iptSongInfo.bandName
         $writingSongInfo.Tag.Album = $customAlbumName
@@ -274,12 +283,16 @@ function writeSongInfo {
         if ($jacketExist) { $writingSongInfo.Tag.Pictures = [TagLib.Picture]($jacketPath) } 
         else { Write-Host "  - " $lang.successWriteByTagLib -ForegroundColor Yellow -NoNewline }
         $writingSongInfo.Save()
+        Rename-Item -Path "Output\.temp.mp3" -NewName $outputSongPath.Split("\")[1]
         Write-Host "  -" $lang.errorWriteByTagLibImgNotFound -ForegroundColor Green
     } catch {
         Write-Host ""
         Write-Error -Message $lang.errorWriteByTagLib -Category WriteError -ErrorId 14
         if (! $Ignore) { Pause }
+        if (Test-Path $outputSongPath) { Remove-Item $outputSongPath }
         Return
+    } finally {
+        if (Test-Path "Output\.temp.mp3") { Remove-Item "Output\.temp.mp3" }
     }
 }
 
