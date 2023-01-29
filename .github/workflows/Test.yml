@@ -34,14 +34,14 @@ jobs:
         name: taglibsharp.dll
         path: src/TaglibSharp/bin/Release/netstandard2.0/TagLibSharp.dll
 
-  pack-utf8:
+  pack:
     runs-on: ubuntu-latest
     needs: build-taglibsharp
     steps:
       - uses: actions/checkout@v3
 
       - name: Install environment
-        run: sudo apt install -y tofrodos zip
+        run: sudo apt install -y zip
 
       - uses: actions/download-artifact@v3
         with:
@@ -49,86 +49,13 @@ jobs:
 
       - name: Pack script to zip
         run: |
-          todos bmd.ps1
-          zip -r Bestdori-Music-Downloader-CRLF-UTF-8-$GITHUB_RUN_NUMBER.zip bmd.ps1 README.md TagLibSharp.dll
+          zip -r -l -9 Bestdori-Music-Downloader-CRLF-UTF-8-$GITHUB_RUN_NUMBER.zip bmd.ps1 README.md Localized
+          zip -r -9 Bestdori-Music-Downloader-CRLF-UTF-8-$GITHUB_RUN_NUMBER.zip TagLibSharp.dll
+          zip -r -9 Bestdori-Music-Downloader-LF-UTF-8-$GITHUB_RUN_NUMBER.zip bmd.ps1 README.md Localized
+          zip -r -9 Bestdori-Music-Downloader-LF-UTF-8-$GITHUB_RUN_NUMBER.zip TagLibSharp.dll
 
       - name: Upload zip file
         uses: actions/upload-artifact@v3
         with:
           name: Bestdori-Music-Downloader-CRLF-UTF-8-Build${{ github.run_number }}
           path: Bestdori-Music-Downloader-CRLF-UTF-8-${{ github.run_number }}.zip
-
-  pack-gbk:
-    runs-on: ubuntu-latest
-    needs: build-taglibsharp
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Install environment
-        run: sudo apt install -y tofrodos zip
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: taglibsharp.dll
-
-      - name: Pack script to zip
-        run: |
-          todos bmd.ps1
-          iconv -c -f utf-8 -t gbk bmd.ps1>bmd.gbk.ps1
-          zip -r Bestdori-Music-Downloader-CRLF-GBK-$GITHUB_RUN_NUMBER.zip bmd.gbk.ps1 README.md TagLibSharp.dll
-
-      - name: Upload zip file
-        uses: actions/upload-artifact@v3
-        with:
-          name: Bestdori-Music-Downloader-CRLF-GBK-Build${{ github.run_number }}
-          path: Bestdori-Music-Downloader-CRLF-GBK-${{ github.run_number }}.zip
-
-  pack-shiftjis:
-    runs-on: ubuntu-latest
-    needs: build-taglibsharp
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Install environment
-        run: sudo apt install -y tofrodos zip
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: taglibsharp.dll
-
-      - name: Pack script to zip
-        run: |
-          todos bmd.ps1
-          iconv -c -f utf-8 -t shift-jis bmd.ps1>bmd.jis.ps1
-          zip -r Bestdori-Music-Downloader-CRLF-SHIFT-JIS-$GITHUB_RUN_NUMBER.zip bmd.jis.ps1 README.md TagLibSharp.dll
-
-      - name: Upload zip file
-        uses: actions/upload-artifact@v3
-        with:
-          name: Bestdori-Music-Downloader-CRLF-SHIFT-JIS-Build${{ github.run_number }}
-          path: Bestdori-Music-Downloader-CRLF-SHIFT-JIS-${{ github.run_number }}.zip
-
-  pack-euckr:
-    runs-on: ubuntu-latest
-    needs: build-taglibsharp
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Install environment
-        run: sudo apt install -y tofrodos zip
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: taglibsharp.dll
-
-      - name: Pack script to zip
-        run: |
-          todos bmd.ps1
-          iconv -c -f utf-8 -t euc-kr bmd.ps1>bmd.kr.ps1
-          zip -r Bestdori-Music-Downloader-CRLF-EUC-KR-$GITHUB_RUN_NUMBER.zip bmd.kr.ps1 README.md TagLibSharp.dll
-
-      - name: Upload zip file
-        uses: actions/upload-artifact@v3
-        with:
-          name: Bestdori-Music-Downloader-CRLF-EUC-KR-Build${{ github.run_number }}
-          path: Bestdori-Music-Downloader-CRLF-EUC-KR-${{ github.run_number }}.zip

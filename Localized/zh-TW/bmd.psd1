@@ -1,0 +1,44 @@
+#culture="zh-TW"
+# Processed by 繁化姬 https://zhconvert.org 
+ConvertFrom-StringData @'
+    infoLoadLibrary = 正在載入庫
+    successLoadLibrary = 載入成功！
+    errorLoadLibrary = 載入失敗！
+    infoDwlAllSongsID = 正在下載全部歌曲 ID
+    infoLoadSongID = 正在讀取文件內的歌曲 ID
+    successLoadSongID1 = 已讀取到
+    successLoadSongID2 = 首歌曲 ID！
+    errorLoadSongID = 未讀取到任何歌曲 ID！請檢查你的歌曲 ID 列表文件。
+    infoDownloadBandInfo = 正在下載樂隊訊息
+    successDownloadBandInfo = 樂隊訊息下載成功！
+    errorDownloadBandInfo = 未下載到任何樂隊訊息！請檢查你的網路設定。
+    errorSpecifiedServerNotFound = 指定的伺服器未找到。
+    infoSongIDGetInfo1 = 正在根據歌曲
+    infoSongIDGetInfo2 = 下載歌曲訊息
+    successSongIDGetInfo = 歌曲訊息下載成功！
+    errorSongIDGetInfo = 未下載到任何歌曲訊息！請檢查你的網路設定。
+    infoBandTitle = 樂團 - 標題:
+    infoLyCoAr = 作詞、作曲、編曲：
+    errorTagLibNotFound = 未找到庫 TagLibSharp.dll！無法寫入歌曲訊息！
+    errorParsedSongInfo = 獲取歌曲訊息失敗！請檢查你的歌曲 ID、指定的下載伺服器和網路設定。
+    infoClean = 已啟用清理，正在刪除 Jacket 和 Origin 資料夾。
+    infoFolderNotFound1 = 資料夾
+    infoFolderNotFound2 = 未找到，正在建立
+    successFolderNotFound = 資料夾建立成功！
+    errorFolderNotFound1 = 建立資料夾
+    errorFolderNotFound2 = 錯誤！
+    infoDownloadingTo1 = 正在下載
+    infoDownloadingTo2 = 至
+    successDownloadingTo = 資源下載成功！
+    errorDownloadingTo = 下載出現錯誤！請檢查你的歌曲 ID、指定的下載伺服器和網路設定。
+    errorDownloadJacketType = 下載出現錯誤！該圖片不存在於此伺服器。請檢查你的歌曲 ID 和指定的下載伺服器。
+    infoDownloadFileExist = 已存在。跳過下載！
+    infoCopyTo1 = 正在複製
+    infoCopyTo2 = 至
+    successCopyTo = 資源複製成功！
+    errorCopyTo = 資源複製失敗！
+    infoWriteByTagLib = 正在使用 TagLibSharp.dll 寫入歌曲訊息
+    successWriteByTagLib = 圖片未找到，跳過！
+    errorWriteByTagLibImgNotFound = 訊息寫入成功！
+    errorWriteByTagLib = 訊息寫入失敗！
+'@

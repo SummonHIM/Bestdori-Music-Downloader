@@ -8,8 +8,8 @@
     一个能从 Bestdori 上自动下载音乐并填入音乐信息（歌曲标题、歌手、专辑、作曲人员和封面）的脚本。
 
     .PARAMETER listFile
-    Specify the song ID file.
-    指定歌曲ID文件。
+    Specify the song ID file. If value is "all", download all songs.
+    指定歌曲ID文件。若值为“all”则下载全部歌曲。
 
     .PARAMETER mainServer
     Specify the download server.
@@ -19,25 +19,25 @@
     Specify the album name.
     指定专辑名称。
 
-    .PARAMETER forceReDownload
+    .PARAMETER defaultJacket
+    Specify default song image ID. Will auto reset to zero if not exist.
+    指定默认歌曲图片ID。若不存在则为0。
+
+    .PARAMETER forceRedownload
     Enable forced redownload. Will redownload even if the file exists.
     启用强制重新下载。即使文件存在也将重新下载。
 
-    .PARAMETER clean
+    .PARAMETER Clean
     Clean up downloaded data when script finished.
     脚本完成后清理下载数据。
 
-    .PARAMETER ignore
+    .PARAMETER Ignore
     Ignore error's pause.
     当有错误时不暂停运行脚本。
 
     .PARAMETER moreInfo
     Show more information when script execution.
     脚本执行时显示更多信息。
-
-    .PARAMETER defaultJacket
-    Specify default song image ID. Will auto reset to zero if not exist.
-    指定默认歌曲图片ID。若不存在则为0。
 
     .INPUTS
     Input -listFile Specify the song ID file.
@@ -56,7 +56,7 @@
     Simplest/最简
 
     .EXAMPLE
-    .\bmd.ps1 -listFile listFile.sample.json -mainServer cn -customAlbumName "BanG Dream!" -forceReDownload -clean
+    .\bmd.ps1 -listFile listFile.sample.json -mainServer cn -customAlbumName "BanG Dream!" -forceRedownload -Clean
     Fullest/最全
 
     .LINK
@@ -64,22 +64,20 @@
 #>
 
 param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$listFile,
-    [Parameter(ValueFromPipeline = $true)][string]$mainServer = "jp",
+    [Parameter(Mandatory = $true, ValueFromPipeline = $true)][string]$listFile,
+    [string]$mainServer = "jp",
     [string]$customAlbumName = "バンドリ！　ガールズバンドパーティ！",
-    [switch]$forceReDownload = $false,
-    [switch]$clean = $false,
-    [switch]$ignore = $false,
-    [switch]$moreInfo = $false,
-    [int]$defaultJacket = 0
+    [int]$defaultJacket = 0,
+    [switch]$forceRedownload = $false,
+    [switch]$Clean = $false,
+    [switch]$Ignore = $false,
+    [switch]$moreInfo = $false
 )
-
-[System.IO.Directory]::SetCurrentDirectory("$(Get-Location)")
 
 if ($host.Version -le 5.1) {
     Write-Output ""
     Write-Output "Your PowerShell version is too low. Please upgrade your PowerShell."
-    Write-Output "You can download the Windows Management Framework 5.1 to upgrade your PowerShell version:"
+    Write-Output "You can download the Windows Management Framework 5.1 to upgrade your PowerShell to 5.1:"
     Write-Output "https://docs.microsoft.com/powershell/scripting/windows-powershell/wmf/setup/install-configure?view=powershell-5.1"
     Write-Output ""
     Write-Output "Press Ctrl+C or wait 60 second to exit..."
@@ -87,241 +85,335 @@ if ($host.Version -le 5.1) {
     exit
 }
 
-$getSysLang = Get-WinSystemLocale
-if ($getSysLang.LCID -eq 2052 -or $getSysLang.LCID -eq 4096 -or $getSysLang.LCID -eq 4 -or $getSysLang.LCID -eq 4100) {
-    $langFolder = "文件夹"
-    $langNotFoundMkdir = "未找到，正在创建"
-    $langDownloading = "正在下载"
-    $langTo = "至"
-    $langIsAlreadyDownloaded = "已下载"
-    $langJacketTypeError = "图片类型不正确！"
-    $langJacketTryRedown = "正在尝试重新下载…"
-    $langJacketSkip = "跳过添加图片。"
-    $langJacketWriting = "正在使用 TagLibSharp.dll 写入歌曲信息…"
-    $langCopying = "正在复制"
-    $langTagLibSharpLoading = "正在加载库 TagLibSharp.dll！"
-    $langTagLibSharpNotFound = "未找到库 TagLibSharp.dll！无法写入歌曲信息…"
-    $langBandInfo = "乐队信息…"
-    $langSongInfo = "歌曲信息…"
-    $langEnableClean = "已启用清理，正在删除 Jacket 和 Origin 文件夹…"
-    $langServerNotFound = "指定的服务器未找到。"
+$lang = Data {
+    #culture="en-US"
+    ConvertFrom-StringData -StringData @'
+    infoLoadLibrary = Loading library
+    successLoadLibrary = Loaded successfully!
+    errorLoadLibrary = Loading failed!
+    infoDwlAllSongsID = Fetching all songs ID
+    infoLoadSongID = Reading the song ID in file
+    successLoadSongID1 = 
+    successLoadSongID2 = song IDs have been read!
+    errorLoadSongID = No song IDs were read! Please check your song ID list file.
+    infoDownloadBandInfo = Downloading band information
+    successDownloadBandInfo = Band information downloaded successfully!
+    errorDownloadBandInfo = No band information has been downloaded! Please check your network connection.
+    errorSpecifiedServerNotFound = Specified server was not found.
+    infoSongIDGetInfo1 = Downloading song information by song
+    infoSongIDGetInfo2 = 
+    successSongIDGetInfo = Song information downloaded successfully!
+    errorSongIDGetInfo = No song information has been downloaded! Please check your network connection.
+    infoBandTitle = Band - Title:
+    infoLyCoAr = Lyricist, Composer, Arranger：
+    errorTagLibNotFound = Library TagLibSharp.dll not found! Unable to write song information!
+    errorParsedSongInfo = Failed to get song information! Please check your song ID, the specified download server and network connection.
+    infoClean = Cleanup is enabled, deleting Jacket and Origin folders
+    infoFolderNotFound1 = Folder
+    infoFolderNotFound2 = not found, creating
+    successFolderNotFound = Folder created successfully!
+    errorFolderNotFound1 = Failed to create folder
+    errorFolderNotFound2 = !
+    infoDownloadingTo1 = Downloading
+    infoDownloadingTo2 = to
+    successDownloadingTo = Downloaded successfully!
+    errorDownloadingTo = Download error! Please check your song ID, the specified download server and network connection.
+    errorDownloadJacketType = Download error! The image does not exist on this server. Please check your song ID and specified download server.
+    infoDownloadFileExist = Existed. Skip the download!
+    infoCopyTo1 = Copying
+    infoCopyTo2 = to
+    successCopyTo = Copy successfully!
+    errorCopyTo = Copy failed!
+    infoWriteByTagLib = Writing song information using TagLibSharp.dll
+    successWriteByTagLib = Image not found, skip!
+    errorWriteByTagLibImgNotFound = Information written successfully!
+    errorWriteByTagLib = Failed to write information!
+'@
 }
-elseif ($getSysLang.LCID -eq 3076 -or $getSysLang.LCID -eq 5124) {
-    # Processed by 繁化姬 https://zhconvert.org 
-    $langFolder = "文件夾"
-    $langNotFoundMkdir = "未找到，正在創建"
-    $langDownloading = "正在下載"
-    $langTo = "至"
-    $langIsAlreadyDownloaded = "已下載"
-    $langJacketTypeError = "圖片類型不正確！"
-    $langJacketTryRedown = "正在嘗試重新下載…"
-    $langJacketSkip = "跳過添加圖片。"
-    $langJacketWriting = "正在使用 TagLibSharp.dll 寫入歌曲訊息…"
-    $langCopying = "正在複製"
-    $langTagLibSharpLoading = "正在加載庫 TagLibSharp.dll！"
-    $langTagLibSharpNotFound = "未找到庫 TagLibSharp.dll！無法寫入歌曲訊息…"
-    $langBandInfo = "樂隊訊息…"
-    $langSongInfo = "歌曲訊息…"
-    $langEnableClean = "已啟用清理，正在刪除 Jacket 和 Origin 文件夾…"
-    $langServerNotFound = "指定的伺服器未找到。"
-}
-elseif ($getSysLang.LCID -eq 31748 -or $getSysLang.LCID -eq 1028) {
-    # Processed by 繁化姬 https://zhconvert.org 
-    $langFolder = "資料夾"
-    $langNotFoundMkdir = "未找到，正在建立"
-    $langDownloading = "正在下載"
-    $langTo = "至"
-    $langIsAlreadyDownloaded = "已下載"
-    $langJacketTypeError = "圖片類型不正確！"
-    $langJacketTryRedown = "正在嘗試重新下載…"
-    $langJacketSkip = "跳過添加圖片。"
-    $langJacketWriting = "正在使用 TagLibSharp.dll 寫入歌曲訊息…"
-    $langCopying = "正在複製"
-    $langTagLibSharpLoading = "正在載入庫 TagLibSharp.dll！"
-    $langTagLibSharpNotFound = "未找到庫 TagLibSharp.dll！無法寫入歌曲訊息…"
-    $langBandInfo = "樂隊訊息…"
-    $langSongInfo = "歌曲訊息…"
-    $langEnableClean = "已啟用清理，正在刪除 Jacket 和 Origin 資料夾…"
-    $langServerNotFound = "指定的伺服器未找到。"
-}
-else {
-    $langFolder = "Folder"
-    $langNotFoundMkdir = "not found, Creating..."
-    $langDownloading = "Downloading"
-    $langTo = "to"
-    $langIsAlreadyDownloaded = "is already downloaded."
-    $langJacketTypeError = "Image type not correct!"
-    $langJacketTryRedown = "Try redownload..."
-    $langJacketSkip = "skip image adding."
-    $langJacketWriting = "Writing music information by using TagLibSharp.dll..."
-    $langCopying = "Copying"
-    $langTagLibSharpNotFound = "Library TagLibSharp.dll Not found! Can't fill in song information."
-    $langBandInfo = " band information..."
-    $langSongInfo = " song information..."
-    $langEnableClean = "Clean is enable, removing Jacket and Origin..."
-    $langServerNotFound = "The server you specified was not found."
+Import-LocalizedData -BindingVariable lang -BaseDirectory Localized
+
+function Format-Renameable {
+    param ([Parameter(Mandatory = $true, ValueFromPipeline = $true)]$iptString)
+    Return $iptString.Replace('\', '-').Replace('/', '-').Replace(':', '-').Replace('*', '-').Replace('?', '-').Replace('"', '-').Replace('<', '-').Replace('>', '-').Replace('|', '-')
 }
 
-function downloadSongs {
+function downloadSong {
+    param([Parameter(Mandatory = $true, ValueFromPipeline = $true)]$iptSongInfo)
+
     # If folder "Origin" not exist, mkdir.
-    $isOriginExist = Test-Path Origin
-    if (! $isOriginExist) {
-        Write-Host "$langFolder Origin $langNotFoundMkdir" -ForegroundColor Yellow
-        if ($moreInfo) { mkdir Origin } else { mkdir Origin > $null }
+    if (!(Test-Path "Origin")) {
+        Write-Host $lang.infoFolderNotFound1 "Origin" $lang.infoFolderNotFound2 "..." -ForegroundColor White -NoNewline
+        try {
+            if ($moreInfo) { New-Item -Name "Origin" -ItemType Directory }
+            else { New-Item -Name "Origin" -ItemType Directory | Out-Null }
+            Write-Host "  -" $lang.successFolderNotFound -ForegroundColor Green
+        } catch {
+            Write-Host ""
+            $errorFolderOriginNotFound = $lang.errorFolderNotFound1 + " Origin " + $lang.errorFolderNotFound2
+            Write-Error -Message $errorFolderOriginNotFound -Category WriteError -ErrorId 6
+            if (! $Ignore) { Pause }
+            Return 1
+        }
     }
     
     # Generate music download url.
-    $musicDownloadUrl = "https://bestdori.com/assets/" + $mainServer + "/sound/" + $songInfo_bgmId + "_rip/" + $songInfo_bgmId + ".mp3"
+    $downloadSongUrl = "https://bestdori.com/assets/" + $mainServer + "/sound/" + $iptSongInfo.bgmId + "_rip/" + $iptSongInfo.bgmId + ".mp3"
+    $saveSongPath = "Origin\" + $iptSongInfo.bgmId + ".mp3"
     # If music already downloaded, skip. else go download.
-    $isMusicDownloaded = Test-Path "Origin\$songInfo_bgmId.mp3"
-    if ((! $isMusicDownloaded) -or ($forceReDownload)) {
-        Write-Host "$langDownloading $musicDownloadUrl $langTo Origin\$songInfo_bgmId.mp3..." -ForegroundColor Green
-        Invoke-WebRequest "$musicDownloadUrl" -OutFile "Origin\$songInfo_bgmId.mp3"
-    }
-    else {
-        Write-Host "$songInfo_bgmId.mp3(Origin\$songInfo_bgmId.mp3) $langIsAlreadyDownloaded" -ForegroundColor Yellow
-    }
+    if ((!(Test-Path $saveSongPath)) -or ($forceRedownload)) {
+        Write-Host $lang.infoDownloadingTo1 $downloadSongUrl $lang.infoDownloadingTo2 $saveSongPath... -ForegroundColor White -NoNewline
+        try {
+            Invoke-WebRequest $downloadSongUrl -OutFile $saveSongPath
+            Write-Host "  -" $lang.successDownloadingTo -ForegroundColor Green
+        } catch {
+            Write-Host ""
+            Write-Error -Message $lang.errorDownloadingTo -Category WriteError -ErrorId 7
+            if (! $Ignore) { Pause }
+            Remove-Item $saveSongPath
+            Return 2
+        }
+    } else { Write-Host "$saveSongPath" $lang.infoDownloadFileExist -ForegroundColor Yellow }
+
+    Return 0
 }
 
-function downloadImgs {
+function downloadJacket {
+    param([Parameter(Mandatory = $true, ValueFromPipeline = $true)]$iptSongInfo)
+
     # If folder "Jacket" not exist, mkdir.
-    $isJacketExist = Test-Path Jacket
-    if (! $isJacketExist) {
-        Write-Host "$langFolder Jacket $langNotFoundMkdir" -ForegroundColor Yellow
-        if ($moreInfo) { mkdir Jacket } else { mkdir Jacket > $null }
+    if (!(Test-Path "Jacket")) {
+        Write-Host $lang.infoFolderNotFound1 "Jacket" $lang.infoFolderNotFound2 "..." -ForegroundColor White -NoNewline
+        try {
+            if ($moreInfo) { New-Item -Name "Jacket" -ItemType Directory }
+            else { New-Item -Name "Jacket" -ItemType Directory | Out-Null }
+            Write-Host "  -" $lang.successFolderNotFound -ForegroundColor Green
+        } catch {
+            Write-Host ""
+            $errorFolderJacketNotFound = $lang.errorFolderNotFound1 + " Jacket " + $lang.errorFolderNotFound2
+            Write-Error -Message $errorFolderJacketNotFound -Category WriteError -ErrorId 8
+            if (! $Ignore) { Pause }
+            Return 1
+        }
     }
 
     # Generate music jacket download url.
-    $musicJacketUrl = "https://bestdori.com/assets/" + $mainServer + "/musicjacket/musicjacket" + $songJacketPkgID + "_rip/assets-star-forassetbundle-startapp-musicjacket-musicjacket" + $songJacketPkgID + "-" + $songInfo_jacketImage + "-jacket.png"
+    $downloadJacketUrl = "https://bestdori.com/assets/" + $mainServer + "/musicjacket/musicjacket" + $iptSongInfo.JacketPkgID + "_rip/assets-star-forassetbundle-startapp-musicjacket-musicjacket" + $iptSongInfo.JacketPkgID + "-" + $iptSongInfo.jacketImage + "-jacket.png"
+    $saveJacketPath = "Jacket\" + $iptSongInfo.jacketImage + ".png"
     # If music jacket already downloaded, skip. else go download.
-    $isJacketDownloaded = Test-Path "Jacket\$songInfo_jacketImage.png"
-    if ((! $isJacketDownloaded) -or ($forceReDownload)) {
-        Write-Host "$langDownloading $musicJacketUrl $langTo Jacket\$songInfo_jacketImage.png..." -ForegroundColor Green
-        Invoke-WebRequest "$musicJacketUrl" -OutFile "Jacket\$songInfo_jacketImage.png"
-    }
-    else {
-        # If music jacket is bestdori 404(html), try redownload.
-        $CheckJacket = Get-Content "Jacket\$songInfo_jacketImage.png" | Select-String DOCTYPE
-        if ($CheckJacket) {
-            Write-Error "$langJacketTypeError $langJacketTryRedown"
-            if (! $ignore) { Pause }
-            Write-Host "$langDownloading $musicJacketUrl $langTo Jacket\$songInfo_jacketImage.png..." -ForegroundColor Green
-            Invoke-WebRequest "$musicJacketUrl" -OutFile "Jacket\$songInfo_jacketImage.png"
+    if ((!(Test-Path $saveJacketPath)) -or ($forceReDownload)) {
+        Write-Host $lang.infoDownloadingTo1 $downloadJacketUrl $lang.infoDownloadingTo2 $saveJacketPath... -ForegroundColor White -NoNewline
+        try {
+            Invoke-WebRequest $downloadJacketUrl -OutFile $saveJacketPath
+            Write-Host "  -" $lang.successDownloadingTo -ForegroundColor Green
+        } catch {
+            Write-Host ""
+            Write-Error -Message $lang.errorDownloadingTo -Category WriteError -ErrorId 9
+            if (! $Ignore) { Pause }
+            Remove-Item $saveJacketPath
+            Return 2
         }
-        else {
-            Write-Host "$songInfo_jacketImage.png(Jacket\$songInfo_jacketImage.png) $langIsAlreadyDownloaded" -ForegroundColor Yellow
+        if (Get-Content $saveJacketPath | Select-String DOCTYPE) {
+            Write-Host ""
+            Write-Error -Message $lang.errorDownloadJacketType -Category WriteError -ErrorId 10
+            if (! $Ignore) { Pause }
+            Remove-Item $saveJacketPath
+            Return 3
         }
-    }
+    } else { Write-Host "$saveJacketPath" $lang.infoDownloadFileExist -ForegroundColor Yellow }
+
+    Return 0
 }
 
 function writeSongInfo {
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$iptSongInfo,
+        [switch]$jacketExist = $false
+    )
+
     # If folder "Output" not exist, mkdir.
-    $isOutputExist = Test-Path Output
-    if (! $isOutputExist) {
-        Write-Host "$langFolder Output $langNotFoundMkdir" -ForegroundColor Yellow
-        if ($moreInfo) { mkdir Output } else { mkdir Output > $null }
+    if (!(Test-Path "Output")) {
+        Write-Host $lang.infoFolderNotFound1 "Output" $lang.infoFolderNotFound2 "..." -ForegroundColor White -NoNewline
+        try {
+            if ($moreInfo) { New-Item -Name "Output" -ItemType Directory }
+            else { New-Item -Name "Output" -ItemType Directory | Out-Null }
+            Write-Host "  -" $lang.successFolderNotFound -ForegroundColor Green
+        } catch {
+            Write-Host ""
+            $errorFolderOutputNotFound = $lang.errorFolderNotFound1 + " Output " + $lang.errorFolderNotFound2
+            Write-Error -Message $errorFolderOutputNotFound -Category WriteError -ErrorId 12
+            if (! $Ignore) { Pause }
+            Return
+        }
     }
 
+    # Generate save path.
+    $originSongPath = "Origin\" + $iptSongInfo.bgmId + ".mp3"
+    $outputSongPath = "Output\" + $iptSongInfo.rBandName + " - " + $iptSongInfo.rMusicTitle + ".mp3"
+    $jacketPath = "Jacket\" + $iptSongInfo.jacketImage + ".png"
     # Copy music to Output folder
-    Write-Host "$langCopying Origin\$songInfo_bgmId.mp3 $langTo Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3..." -ForegroundColor Green
-    Copy-Item "Origin\$songInfo_bgmId.mp3" -Destination "Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3"
+    Write-Host $lang.infoCopyTo1 $originSongPath $lang.infoCopyTo2 $outputSongPath "..." -ForegroundColor White -NoNewline
+    try {
+        Copy-Item $originSongPath -Destination $outputSongPath
+        Write-Host "  -" $lang.successCopyTo -ForegroundColor Green
+    } catch {
+        Write-Host ""
+        Write-Error -Message $lang.errorCopyTo -Category WriteError -ErrorId 13
+        if (! $Ignore) { Pause }
+        Remove-Item $outputSongPath
+        Return
+    }
+    
     # If music jacket is bestdori 404(html), skip add-image.
-    $CheckPNG = Get-Content "Jacket\$songInfo_jacketImage.png" | Select-String DOCTYPE
-    if ($CheckPNG) {
-        Write-Error "$langJacketTypeError $langJacketSkip"
-        if (! $ignore) { Pause }
-        Write-Host "$langJacketWriting" -ForegroundColor Green
-        $writeSongInfo = [TagLib.File]::Create("Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3")
-        $writeSongInfo.Tag.Title = "$songInfo_musicTitle"
-        $writeSongInfo.Tag.Artists = "$bandName"
-        $writeSongInfo.Tag.Album = "$customAlbumName"
-        $writeSongInfo.Tag.Composers = "$songInfo_lyricist;$songInfo_composer;$songInfo_arranger"
-        $writeSongInfo.Save()
-    }
-    elseif ($checkTagLib) {
-        Write-Host "$langJacketWriting" -ForegroundColor Green
-        $writeSongInfo = [TagLib.File]::Create("Output\$bandName_RenameAble - $songInfo_musicTitle_RenameAble.mp3")
-        $writeSongInfo.Tag.Title = "$songInfo_musicTitle"
-        $writeSongInfo.Tag.Artists = "$bandName"
-        $writeSongInfo.Tag.Album = "$customAlbumName"
-        $writeSongInfo.Tag.Composers = "$songInfo_lyricist;$songInfo_composer;$songInfo_arranger"
-        $writeSongInfo.Tag.Pictures = [TagLib.Picture]("Jacket\$songInfo_jacketImage.png")
-        $writeSongInfo.Save()
-    }
-    else {
-        Write-Error "$langTagLibSharpNotFound"
-        if (! $ignore) { Pause }
+    Write-Host $lang.infoWriteByTagLib "..." -ForegroundColor White -NoNewline
+    try {
+        $writingSongInfo = [TagLib.File]::Create($outputSongPath)
+        $writingSongInfo.Tag.Title = $iptSongInfo.musicTitle
+        $writingSongInfo.Tag.Artists = $iptSongInfo.bandName
+        $writingSongInfo.Tag.Album = $customAlbumName
+        $writingSongInfo.Tag.Composers = $iptSongInfo.lyricist + ";" + $iptSongInfo.composer + ";" + $iptSongInfo.arranger
+        if ($jacketExist) { $writingSongInfo.Tag.Pictures = [TagLib.Picture]($jacketPath) } 
+        else { Write-Host "  - " $lang.successWriteByTagLib -ForegroundColor Yellow -NoNewline }
+        $writingSongInfo.Save()
+        Write-Host "  -" $lang.errorWriteByTagLibImgNotFound -ForegroundColor Green
+    } catch {
+        Write-Host ""
+        Write-Error -Message $lang.errorWriteByTagLib -Category WriteError -ErrorId 14
+        if (! $Ignore) { Pause }
+        Return
     }
 }
 
-# Load TagLibSharp.dll
-$isTagLibSharpExist = Test-Path "TagLibSharp.dll"
-if ($isTagLibSharpExist) {
-    Write-Host "$langTagLibSharpLoading" -ForegroundColor Green
-    [Reflection.Assembly]::LoadFrom("TagLibSharp.dll")
-    $checkTagLib = $true
+[System.IO.Directory]::SetCurrentDirectory("$(Get-Location)")
+
+# Load TagLibSharp.dll if exist
+if (Test-Path "TagLibSharp.dll") {
+    Write-Host $lang.infoLoadLibrary "TagLibSharp.dll..." -ForegroundColor White -NoNewline
+    try {
+        if ($moreInfo) { [Reflection.Assembly]::LoadFrom("TagLibSharp.dll") }
+        else { [Reflection.Assembly]::LoadFrom("TagLibSharp.dll") | Out-Null }
+        $checkTagLib = $true
+        Write-Host "  -" $lang.successLoadLibrary -ForegroundColor Green
+    }
+    catch {
+        Write-Host ""
+        Write-Error -Message $lang.errorLoadLibrary -Category ResourceUnavailable -ErrorId 11
+    }
     Write-Host ""
 }
 
-# Get song list in $listFile
-$getSongList = Get-Content $listFile | ConvertFrom-Json
-Write-Host "$langDownloading$langBandInfo" -ForegroundColor Green
-$bandInfo = Invoke-RestMethod "https://bestdori.com/api/bands/all.1.json"
-if ($mainServer -eq "jp") { $songInfoLanguage = 0 }
-elseif ($mainServer -eq "en") { $songInfoLanguage = 1 }
-elseif ($mainServer -eq "tw") { $songInfoLanguage = 2 }
-elseif ($mainServer -eq "cn") { $songInfoLanguage = 3 }
-elseif ($mainServer -eq "kr") { $songInfoLanguage = 4 }
+# Get $listFile's song id
+if ($listFile -eq "all") {
+    Write-Host $lang.infoDwlAllSongsID "..." -ForegroundColor White -NoNewline
+    $getAllSongId = Invoke-RestMethod "https://bestdori.com/api/songs/all.0.json"
+    $getlistFile = @{ songs = $getAllSongId.PSObject.Properties.Name }
+} else {
+    Write-Host $lang.infoLoadSongID "..." -ForegroundColor White -NoNewline
+    $getlistFile = Get-Content $listFile | ConvertFrom-Json
+}
+if ($getlistFile.songs.Count -gt 0) { Write-Host "  -" $lang.successLoadSongID1 $getlistFile.songs.Count $lang.successLoadSongID2 -ForegroundColor Green }
 else {
-    Write-Error $langServerNotFound
-    exit 1
-}
-foreach ($songList in $getSongList.songs) {
     Write-Host ""
-    # Download song information from https://bestdori.com/api/songs/$songList.json
-    Write-Host "$langDownloading$langSongInfo" -ForegroundColor Green
-    $songInfo = Invoke-RestMethod "https://bestdori.com/api/songs/$songList.json"
-    # Get bgmID
-    $songInfo_bgmId = $songInfo.bgmId
-    # Get bandName
-    $bandNameNG = $bandInfo.($songInfo.bandId)
-    $bandName = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($bandNameNG.bandName[$songInfoLanguage]))
-    $bandName_RenameAble = $bandName.replace('\', '-').replace('/', '-').replace(':', '：').replace('*', '＊').replace('?', '？').replace('"', '`').replace('<', '《').replace('>', '》').replace('|', '-')
-    # Get musicTitle
-    $songInfo_musicTitle = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($songInfo.musicTitle[$songInfoLanguage]))
-    $songInfo_musicTitle_RenameAble = $songInfo_musicTitle.replace('\', '-').replace('/', '-').replace(':', '：').replace('*', '＊').replace('?', '？').replace('"', '`').replace('<', '《').replace('>', '》').replace('|', '-')
-    # Get composer
-    $songInfo_lyricist = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($songInfo.lyricist[$songInfoLanguage]))
-    $songInfo_composer = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($songInfo.composer[$songInfoLanguage]))
-    $songInfo_arranger = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($songInfo.arranger[$songInfoLanguage]))
-    # Get front cover image
-    if ($songInfo.jacketImage[$defaultJacket]) {
-        $songInfo_jacketImage = $songInfo.jacketImage[$defaultJacket].replace('Introduction', 'introduction')
-    }
-    else {
-        $songInfo_jacketImage = $songInfo.jacketImage[0].replace('Introduction', 'introduction')
-    }
-    
-    # Calculate front cover image's package id
-    $songListTestInt = $songList / 10
-    if ($songListTestInt -isnot [int]) {
-        $songJacketPkgID = $songList + (10 - $songList % 10)
-    }
-    else {
-        $songJacketPkgID = $songList
-    }
-    # Collect all information and print
-    $echoAllInfo = '{"bgmId": "' + $songInfo.bgmId + '", "bandId": "' + $songInfo.bandId + '", "bandName": "' + $bandName + '", "bandName_RenameAble": "' + $bandName_RenameAble + '", "musicTitle": "' + $songInfo_musicTitle + '", "songInfo_musicTitle_RenameAble": "' + $songInfo_musicTitle_RenameAble + '", "lyricist": "' + $songInfo_lyricist + '", "composer": "' + $songInfo_composer + '", "arranger": "' + $songInfo_arranger + '", "jacketImage": "' + $songInfo.jacketImage + '", "songJacketPkgID": "' + $songJacketPkgID + '"}' | ConvertFrom-Json
-    if ($moreInfo) { Write-Output $echoAllInfo }
-    
-    downloadSongs
-    downloadImgs
-    writeSongInfo
+    Write-Error -Message $lang.errorLoadSongID -Category ObjectNotFound -ErrorId 1
+    Exit 1
 }
 
-if ($clean) {
+
+# Get bestdori all band name and id
+Write-Host $lang.infoDownloadBandInfo "..." -ForegroundColor White -NoNewline
+$getBandInfo = Invoke-RestMethod "https://bestdori.com/api/bands/all.1.json"
+if ($getBandInfo) { Write-Host "  -" $lang.successDownloadBandInfo -ForegroundColor Green } 
+else {
     Write-Host ""
-    Write-Host "$langEnableClean" -ForegroundColor Yellow
+    Write-Error -Message $lang.errorDownloadBandInfo -Category ResourceUnavailable -ErrorId 2
+    Exit 2
+}
+
+# Parse server id
+if ($mainServer -eq "jp") { $iMainServer = 0 }
+elseif ($mainServer -eq "en") { $iMainServer = 1 }
+elseif ($mainServer -eq "tw") { $iMainServer = 2 }
+elseif ($mainServer -eq "cn") { $iMainServer = 3 }
+elseif ($mainServer -eq "kr") { $iMainServer = 4 }
+else {
+    Write-Error -Message $lang.errorSpecifiedServerNotFound -Category ObjectNotFound -ErrorId 3
+    Exit 3
+}
+
+# Loop $getlistFile.songs
+$countLoop = 0
+foreach ($songIdList in $getlistFile.songs) {
+    $countLoop++
+
+    # Clean all data
+    Write-Host ""
+    $getSongInfo = $null
+    $parsedSongInfo = $null
+
+    # Download song information from https://bestdori.com/api/songs/$songIdList.json
+    Write-Host $lang.infoSongIDGetInfo1 "ID.$songIdList" $lang.infoSongIDGetInfo2 "(" $countLoop "/" $getlistFile.songs.Count ")..." -ForegroundColor White -NoNewline
+    $getSongInfo = Invoke-RestMethod "https://bestdori.com/api/songs/$songIdList.json"
+    if ($getSongInfo) { Write-Host "  -" $lang.successSongIDGetInfo -ForegroundColor Green }
+    else {
+        Write-Host ""
+        Write-Error -Message $lang.errorSongIDGetInfo -Category ResourceUnavailable -ErrorId 4
+    }
+
+    # Set band name as bandId
+    $setBandNameArray = $getBandInfo.($getSongInfo.bandId)
+
+    # Init $parsedSongInfo then add/transcode song info
+    $parsedSongInfo = @{
+        bgmId      = $getSongInfo.bgmId
+        musicTitle = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($getSongInfo.musicTitle[$iMainServer]))
+        bandName   = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($setBandNameArray.bandName[$iMainServer]))
+        lyricist   = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($getSongInfo.lyricist[$iMainServer]))
+        composer   = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($getSongInfo.composer[$iMainServer]))
+        arranger   = [System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($getSongInfo.arranger[$iMainServer]))
+        rMusicTitle = Format-Renameable([System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($getSongInfo.musicTitle[$iMainServer])))
+        rBandName   = Format-Renameable([System.Text.Encoding]::UTF8.GetString([System.Text.Encoding]::GetEncoding("ISO-8859-1").GetBytes($setBandNameArray.bandName[$iMainServer])))
+    }
+
+    # Get front cover image
+    if ($getSongInfo.jacketImage[$defaultJacket]) { $parsedSongInfo.jacketImage = $getSongInfo.jacketImage[$defaultJacket].replace('Introduction', 'introduction') }
+    else { $parsedSongInfo.jacketImage = $getSongInfo.jacketImage[0].replace('Introduction', 'introduction') }
+
+    # Calculate front cover image's package id
+    if (([int]$songIdList / 10) -isnot [int]) { $parsedSongInfo.JacketPkgID = [int]$songIdList + (10 - [int]$songIdList % 10) }
+    else { $parsedSongInfo.JacketPkgID = [int]$songIdList }
+
+    # if not empty, echo & exec next. if empty, say error and pause
+    if ($parsedSongInfo) {
+        Write-Host "--------------------------------------------------" -ForegroundColor Cyan
+        if ($moreInfo) { Write-Output $parsedSongInfo }
+        else {
+            Write-Host $lang.infoBandTitle $parsedSongInfo.bandName "-" $parsedSongInfo.musicTitle
+            Write-Host $lang.infoLyCoAr $parsedSongInfo.lyricist ";" $parsedSongInfo.composer ";" $parsedSongInfo.arranger
+        }
+        Write-Host "--------------------------------------------------" -ForegroundColor Cyan
+        if ((downloadSong -iptSongInfo $parsedSongInfo) -eq 0) {
+            if ((downloadJacket -iptSongInfo $parsedSongInfo) -eq 0) {
+                if ($checkTagLib -eq $true) { writeSongInfo -iptSongInfo $parsedSongInfo -jacketExist }
+                else {
+                    Write-Error -Message $lang.errorTagLibNotFound -Category ResourceUnavailable -ErrorId 15
+                    if (! $Ignore) { Pause }
+                }
+            } else {
+                if ($checkTagLib -eq $true) { writeSongInfo -iptSongInfo $parsedSongInfo }
+                else {
+                    Write-Error -Message $lang.errorTagLibNotFound -Category ResourceUnavailable -ErrorId 15
+                    if (! $Ignore) { Pause }
+                }
+            }
+        }
+    } else {
+        Write-Error -Message $lang.errorParsedSongInfo -Category ResourceUnavailable -ErrorId 5
+        if (! $Ignore) { Pause }
+    }
+}
+
+if ($Clean) {
+    Write-Host ""
+    Write-Host $lang.infoClean -ForegroundColor Yellow
     Remove-Item Jacket -Recurse
     Remove-Item Origin -Recurse
 }
