@@ -1,63 +1,63 @@
 <#
     .SYNOPSIS
-    A script that automatically downloads music from Bestdori and fills in the music information.
     一个能从 Bestdori 上自动下载音乐并填入音乐信息的脚本。
+    A script that automatically downloads music from Bestdori and fills in the music information.
 
     .DESCRIPTION
-    A script that automatically downloads music from Bestdori and fills in the music information.(Song title, Artist, Album, Composer and Front cover)
     一个能从 Bestdori 上自动下载音乐并填入音乐信息（歌曲标题、歌手、专辑、作曲人员和封面）的脚本。
+    A script that automatically downloads music from Bestdori and fills in the music information.(Song title, Artist, Album, Composer and Front cover)
 
     .PARAMETER listFile
-    Specify the song ID file. If value is "all", download all songs.
     指定歌曲ID文件。若值为“all”则下载全部歌曲。
+    Specify the song ID file. If value is "all", download all songs.
 
     .PARAMETER mainServer
-    Specify the download server.
     指定下载服务器。
+    Specify the download server.
 
     .PARAMETER customAlbumName
-    Specify the album name.
     指定专辑名称。
+    Specify the album name.
 
     .PARAMETER defaultJacket
-    Specify default song image ID. Will auto reset to zero if not exist.
     指定默认歌曲图片ID。若不存在则为0。
+    Specify default song image ID. Will auto reset to 0 if not exist.
 
     .PARAMETER forceRedownload
-    Enable forced redownload. Will redownload even if the file exists.
     启用强制重新下载。即使文件存在也将重新下载。
+    Enable forced redownload. Will redownload even if the file exists.
 
     .PARAMETER Clean
-    Clean up downloaded data when script finished.
     脚本完成后清理下载数据。
+    Clean up downloaded data when script finished.
 
     .PARAMETER Ignore
-    Ignore error's pause.
     当有错误时不暂停运行脚本。
+    Ignore error's pause.
 
     .PARAMETER moreInfo
-    Show more information when script execution.
     脚本执行时显示更多信息。
+    Show more information when script execution.
 
     .INPUTS
-    Input -listFile Specify the song ID file.
     输入 -listFile 指定的歌曲ID文件。
+    Input -listFile Specify the song ID file.
     
     .OUTPUTS
-    Origin Folder - Save origin music file to Origin folder.
     Origin 文件夹 - 保存源音乐文件至 Origin 文件夹。
-    Jacket Folder - Save origin front cover file to Origin folder.
+    Origin Folder - Save origin music file to Origin folder.
     Jacket 文件夹 - 保存源封面文件至 Origin 文件夹。
-    Output Folder - Convert and save music to Output folder.
+    Jacket Folder - Save origin front cover file to Origin folder.
     Output Folder - 转换并保存音乐至 Output 文件夹。
+    Output Folder - Convert and save music to Output folder.
 
     .EXAMPLE
     .\bmd.ps1 -listFile listFile.sample.json
-    Simplest/最简
+    最简/Simplest
 
     .EXAMPLE
     .\bmd.ps1 -listFile listFile.sample.json -mainServer cn -customAlbumName "BanG Dream!" -forceRedownload -Clean
-    Fullest/最全
+    最全/Fullest
 
     .LINK
     https://github.com/SummonHIM/Bestdori-Music-Downloader

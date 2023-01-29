@@ -21,7 +21,7 @@ A script that automatically downloads music from Bestdori and fills in the music
 -customAlbumName <string>	指定专辑名称。（默认：バンドリ！ ガールズバンドパーティ！）
 				Specify the album name. (Default: バンドリ！ ガールズバンドパーティ！)
 -defaultJacket <Int32>		指定默认歌曲图片ID。若不存在则为0。
-				Specify default song image ID. Will auto reset to zero if not exist.
+				Specify default song image ID. Will auto reset to 0 if not exist.
 -forceRedownload		启用强制重新下载。即使文件存在也将重新下载。
 				Enable forced redownload. Will redownload even if the file exists.
 -Clean				脚本完成后清理下载数据。
