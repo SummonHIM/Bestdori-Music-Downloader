@@ -49,13 +49,15 @@ jobs:
 
       - name: Pack script to zip
         run: |
-          zip -r -l -9 Bestdori-Music-Downloader-CRLF-UTF-8-$GITHUB_RUN_NUMBER.zip bmd.ps1 README.md Localized
-          zip -r -9 Bestdori-Music-Downloader-CRLF-UTF-8-$GITHUB_RUN_NUMBER.zip TagLibSharp.dll
-          zip -r -9 Bestdori-Music-Downloader-LF-UTF-8-$GITHUB_RUN_NUMBER.zip bmd.ps1 README.md Localized
-          zip -r -9 Bestdori-Music-Downloader-LF-UTF-8-$GITHUB_RUN_NUMBER.zip TagLibSharp.dll
+          zip -r -l -9 Bestdori-Music-Downloader-CRLF-UTF-8-Build$GITHUB_RUN_NUMBER.zip bmd.ps1 README.md Localized
+          zip -r -9 Bestdori-Music-Downloader-CRLF-UTF-8-Build$GITHUB_RUN_NUMBER.zip TagLibSharp.dll
+          zip -r -9 Bestdori-Music-Downloader-LF-UTF-8-Build$GITHUB_RUN_NUMBER.zip bmd.ps1 README.md Localized
+          zip -r -9 Bestdori-Music-Downloader-LF-UTF-8-Build$GITHUB_RUN_NUMBER.zip TagLibSharp.dll
 
       - name: Upload zip file
         uses: actions/upload-artifact@v3
         with:
-          name: Bestdori-Music-Downloader-CRLF-UTF-8-Build${{ github.run_number }}
-          path: Bestdori-Music-Downloader-CRLF-UTF-8-${{ github.run_number }}.zip
+          name: Bestdori-Music-Downloader-UTF-8-Build${{ github.run_number }}
+          path: |
+            Bestdori-Music-Downloader-CRLF-UTF-8-Build${{ github.run_number }}.zip
+            Bestdori-Music-Downloader-LF-UTF-8-Build${{ github.run_number }}.zip

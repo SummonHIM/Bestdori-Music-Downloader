@@ -60,8 +60,10 @@ jobs:
       - name: Upload zip file
         uses: actions/upload-artifact@v3
         with:
-          name: Bestdori-Music-Downloader-CRLF-UTF-8-Build${{ github.event.inputs.releaseVersion }}
-          path: Bestdori-Music-Downloader-CRLF-UTF-8-${{ github.event.inputs.releaseVersion }}.zip
+          name: Bestdori-Music-Downloader-UTF-8-${{ github.event.inputs.releaseVersion }}
+          path: |
+            Bestdori-Music-Downloader-CRLF-UTF-8-${{ github.event.inputs.releaseVersion }}.zip
+            Bestdori-Music-Downloader-LF-UTF-8-${{ github.event.inputs.releaseVersion }}.zip
 
   upload-release:
     permissions:
@@ -73,7 +75,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
-          name: Bestdori-Music-Downloader-CRLF-UTF-8-Build${{ github.event.inputs.releaseVersion }}
+          name: Bestdori-Music-Downloader-UTF-8-${{ github.event.inputs.releaseVersion }}
 
       - name: Release
         uses: softprops/action-gh-release@v1
